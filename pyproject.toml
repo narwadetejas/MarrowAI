@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "marrowai"
+version = "0.2.0"
+description = "Offline-first Linux assistant with structured planning and safety gate"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+marrowai = "marrowai.cli:main"
+marrowai-doctor = "marrowai.doctor:main"
+marrowai-chat = "marrowai.interactive:main"
+marrowai-gui = "marrowai.gui:main"
+marrowai-scaffold = "marrowai.scaffold:main"
+marrowai-voice = "marrowai.voice_engine:main"
+marrowai-setup = "marrowai.ubuntu_setup:main"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

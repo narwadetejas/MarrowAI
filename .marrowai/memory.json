@@ -1,0 +1,12 @@
+{
+  "history": [
+    {
+      "message": "List the files in the current workspace",
+      "role": "user"
+    },
+    {
+      "message": "Completed 1 autonomous step(s)",
+      "role": "assistant"
+    }
+  ]
+}

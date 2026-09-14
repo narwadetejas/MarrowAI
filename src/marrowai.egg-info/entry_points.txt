@@ -1,0 +1,2 @@
+[console_scripts]
+marrowai = marrowai.cli:main

@@ -1,0 +1,27 @@
+Metadata-Version: 2.4
+Name: marrowai
+Version: 0.1.0
+Summary: Offline-first Linux assistant with structured planning and safety gate
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+
+# MarrowAI
+
+MarrowAI is an offline-first Linux assistant designed around a structured planning pipeline and a safety gate before execution.
+
+## Quick start
+
+```bash
+python -m pip install -e .
+marrowai --help
+```
+
+## MVP behavior
+
+The first vertical slice proves a safe text flow:
+
+```bash
+marrowai run "List the files in the current workspace"
+```
+
+This generates a structured plan, checks the plan against a risk model, and executes only allowed actions.

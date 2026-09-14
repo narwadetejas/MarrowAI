@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+export PYTHONPATH="/opt/marrowai/python${PYTHONPATH:+:${PYTHONPATH}}"
+exec python3 -m marrowai.scaffold "$@"
