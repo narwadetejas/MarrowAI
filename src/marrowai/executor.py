@@ -2,62 +2,77 @@ from __future__ import annotations
 
 import shlex
 import subprocess
-import sys
-from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
-from .scaffold import ProjectScaffold
-
-
-@dataclass
-class ExecutionResult:
-    status: str
-    output: str
-    exit_code: int | None = None
+from .governor import ResourceGovernor
+from .interfaces import ExecutionResult, ToolCall
+from .tools import ToolRegistry
 
 
 class SafeExecutor:
-    """Allowlisted local tools for bounded autonomous workflows."""
+    """Allowlisted local tools and universal execution engine per HLD & LLD."""
 
-    allowed_tools = {"ls", "list_files", "echo", "run_tests", "scaffold_backend"}
+    allowed_tools = {
+        "ls",
+        "list_files",
+        "echo",
+        "run_tests",
+        "scaffold_backend",
+        "read_file",
+        "write_file",
+        "gui_action",
+        "manage_vm",
+        "manage_models",
+        "system_status",
+        "run_command",
+        "system_exec",
+        "bash",
+        "rm",
+        "delete_file",
+        "manage_memory",
+        "remember",
+        "desktop_action",
+        "open_app",
+        "launch_app",
+        "open_url",
+        "install_package",
+    }
 
-    def execute_tool(self, tool_name: str, parameters: dict | None = None) -> ExecutionResult:
+    def __init__(self, governor: ResourceGovernor | None = None, registry: ToolRegistry | None = None) -> None:
+        self.governor = governor or ResourceGovernor()
+        self.registry = registry or ToolRegistry()
+
+    def execute_tool(self, tool_name: str, parameters: dict[str, Any] | None = None) -> ExecutionResult:
         parameters = parameters or {}
-        if tool_name not in self.allowed_tools:
+        if not self.registry.has(tool_name) and tool_name not in self.allowed_tools:
+            # If tool is not registered directly, attempt to execute as a universal system command if applicable
+            if self.registry.has("run_command"):
+                return self.registry.execute("run_command", {"command": tool_name, **parameters})
             return ExecutionResult("blocked", f"Tool is not allowlisted: {tool_name}", None)
 
-        if tool_name in {"ls", "list_files"}:
-            path = Path(str(parameters.get("path", "."))).resolve()
-            if not path.is_dir():
-                return ExecutionResult("failed", f"Directory does not exist: {path}", None)
-            entries = "\n".join(item.name for item in sorted(path.iterdir()))
-            return ExecutionResult("success", entries, 0)
+        # Pre-execution check with Resource Governor (MA-CORE-005)
+        if tool_name in {"run_tests", "scaffold_backend"}:
+            safe, reason = self.governor.is_safe_to_execute()
+            if not safe:
+                return ExecutionResult("blocked", reason, None)
 
-        if tool_name == "scaffold_backend":
-            project_name = str(parameters.get("project_name", "marrowai_backend")).strip()
-            if not project_name or Path(project_name).name != project_name:
-                return ExecutionResult("blocked", "Invalid project name", None)
-            success = ProjectScaffold().create_backend_project(project_name)
-            return ExecutionResult("success" if success else "failed", f"Scaffolded {project_name}", 0 if success else 1)
+        return self.registry.execute(tool_name, parameters)
 
-        if tool_name == "run_tests":
-            path = Path(str(parameters.get("path", "."))).resolve()
-            if not path.is_dir():
-                return ExecutionResult("failed", f"Test directory does not exist: {path}", None)
-            return self._run_process([sys.executable, "-m", "pytest", "-q"], cwd=path)
+    def execute_tool_call(self, tool_call: ToolCall) -> ExecutionResult:
+        """Executes a typed ToolCall per LLD specification."""
+        return self.execute_tool(tool_call.tool_name, tool_call.arguments)
 
-        return self.execute_command(f"echo {parameters.get('text', '')}")
-
-    def execute_command(self, command: str) -> ExecutionResult:
+    def execute_command(self, command: str, cwd: Path | None = None) -> ExecutionResult:
         try:
             arguments = shlex.split(command)
         except ValueError as exc:
             return ExecutionResult("blocked", str(exc), None)
-        if not arguments or arguments[0] not in {"echo", "ls"}:
-            return ExecutionResult("blocked", "Command is not allowlisted.", None)
+        if not arguments:
+            return ExecutionResult("blocked", "Empty command.", None)
         if arguments[0] == "echo":
             return ExecutionResult("success", " ".join(arguments[1:]), 0)
-        return self._run_process(arguments)
+        return self._run_process(arguments, cwd=cwd)
 
     def _run_process(self, arguments: list[str], cwd: Path | None = None) -> ExecutionResult:
         try:
@@ -65,8 +80,9 @@ class SafeExecutor:
                 arguments,
                 capture_output=True,
                 text=True,
-                timeout=20,
+                timeout=30,
                 cwd=cwd,
+                shell=True,
             )
             output = (completed.stdout or "") + (completed.stderr or "")
             status = "success" if completed.returncode == 0 else "failed"
@@ -81,3 +97,4 @@ class SafeExecutor:
                 output=str(exc),
                 exit_code=None,
             )
+

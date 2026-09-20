@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -e
+
+if ! command -v ollama >/dev/null 2>&1; then
+	echo "Installing Ollama for MarrowAI..."
+	if ! curl -fsSL https://ollama.com/install.sh | sh; then
+		echo "Warning: Ollama installation failed. Run 'marrowai-setup' later to retry." >&2
+	fi
+fi
+
+if command -v systemctl >/dev/null 2>&1 && systemctl list-unit-files ollama.service >/dev/null 2>&1; then
+	systemctl enable --now ollama.service || true
+fi
+
+exit 0

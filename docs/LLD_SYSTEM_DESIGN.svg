@@ -1,0 +1,459 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 2350" width="1600" height="2350" style="background:#090C15; font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,sans-serif;">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="lldBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090C15"/>
+      <stop offset="50%" stop-color="#0E1424"/>
+      <stop offset="100%" stop-color="#080A10"/>
+    </linearGradient>
+    <linearGradient id="headerGradLLD" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="50%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#10B981"/>
+    </linearGradient>
+    <linearGradient id="cardGradLLD" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141C30" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#0E1424" stop-opacity="0.95"/>
+    </linearGradient>
+
+    <!-- Filters -->
+    <filter id="shadowLLD" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+
+    <!-- Markers -->
+    <marker id="arrowIndigo" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#818CF8"/>
+    </marker>
+    <marker id="arrowGreenLLD" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#10B981"/>
+    </marker>
+    <marker id="arrowCyanLLD" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38BDF8"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="2350" fill="url(#lldBg)"/>
+
+  <!-- ==================== HEADER BLOCK ==================== -->
+  <g transform="translate(80, 50)">
+    <rect width="1440" height="110" rx="16" fill="#111728" stroke="#222F4C" stroke-width="1.5" filter="url(#shadowLLD)"/>
+    <rect x="2" y="2" width="6" height="106" rx="3" fill="url(#headerGradLLD)"/>
+    
+    <text x="36" y="44" font-size="26" font-weight="800" fill="#FFFFFF" letter-spacing="-0.5">MarrowAI — Low-Level Design (LLD)</text>
+    <text x="36" y="74" font-size="14" font-weight="500" fill="#94A3B8">Class Architectures, Typed Data Contracts, Method Signatures &amp; Execution Sequence Diagrams</text>
+    
+    <g transform="translate(1120, 28)">
+      <rect width="130" height="28" rx="14" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+      <circle cx="14" cy="14" r="4" fill="#38BDF8"/>
+      <text x="26" y="19" font-size="11" font-weight="700" fill="#E2E8F0">UML &amp; SCHEMAS</text>
+
+      <rect x="142" y="0" width="130" height="28" rx="14" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+      <circle cx="156" cy="14" r="4" fill="#10B981"/>
+      <text x="168" y="19" font-size="11" font-weight="700" fill="#E2E8F0">CONTRACTS v2</text>
+    </g>
+  </g>
+
+  <!-- ==================== SECTION 1: TYPED DATA CONTRACTS & SCHEMAS ==================== -->
+  <g transform="translate(80, 190)">
+    <rect width="1440" height="340" rx="16" fill="url(#cardGradLLD)" stroke="#1F2A44" stroke-width="1.5" filter="url(#shadowLLD)"/>
+    <path d="M 0 16 Q 0 0 16 0 L 1424 0 Q 1440 0 1440 16 L 1440 40 L 0 40 Z" fill="#172138"/>
+    <text x="24" y="26" font-size="13" font-weight="800" fill="#38BDF8" letter-spacing="1">1. TYPED DATA CONTRACTS &amp; INTERFACE SCHEMAS (interfaces.py)</text>
+
+    <!-- UserInput Contract -->
+    <g transform="translate(24, 55)">
+      <rect width="265" height="265" rx="10" fill="#0A0E1A" stroke="#233252"/>
+      <rect x="0" y="0" width="265" height="32" rx="10" fill="#131D33"/>
+      <text x="12" y="22" font-size="13" font-weight="700" fill="#A5B4FC">«dataclass» UserInput</text>
+      <text x="12" y="55" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ text: str | None</text>
+      <text x="12" y="75" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ audio: bytes | None</text>
+      <text x="12" y="95" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ source: str = "text"</text>
+      <text x="12" y="115" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ metadata: dict[str, Any]</text>
+      <line x1="8" y1="130" x2="257" y2="130" stroke="#1E2A44"/>
+      <text x="12" y="150" font-size="10.5" font-weight="600" fill="#94A3B8">Usage:</text>
+      <text x="12" y="170" font-size="10.5" fill="#94A3B8">• Normalized multimodal ingest</text>
+      <text x="12" y="190" font-size="10.5" fill="#94A3B8">• Voice transcript pass-through</text>
+      <text x="12" y="210" font-size="10.5" fill="#94A3B8">• Client environment tagging</text>
+    </g>
+
+    <!-- TaskPlan Contract -->
+    <g transform="translate(309, 55)">
+      <rect width="265" height="265" rx="10" fill="#0A0E1A" stroke="#233252"/>
+      <rect x="0" y="0" width="265" height="32" rx="10" fill="#131D33"/>
+      <text x="12" y="22" font-size="13" font-weight="700" fill="#A5B4FC">«dataclass» TaskPlan</text>
+      <text x="12" y="55" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ id: str</text>
+      <text x="12" y="75" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ intent: str</text>
+      <text x="12" y="95" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ steps: list[PlanStep]</text>
+      <text x="12" y="115" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ constraints: list[str]</text>
+      <text x="12" y="135" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ risk_level: str = "low"</text>
+      <line x1="8" y1="150" x2="257" y2="150" stroke="#1E2A44"/>
+      <text x="12" y="170" font-size="10.5" font-weight="600" fill="#94A3B8">Guarantees:</text>
+      <text x="12" y="190" font-size="10.5" fill="#94A3B8">• Strictly typed steps</text>
+      <text x="12" y="210" font-size="10.5" fill="#94A3B8">• Deterministic sequence</text>
+      <text x="12" y="230" font-size="10.5" fill="#94A3B8">• Never raw shell strings</text>
+    </g>
+
+    <!-- PlanStep Contract -->
+    <g transform="translate(594, 55)">
+      <rect width="265" height="265" rx="10" fill="#0A0E1A" stroke="#233252"/>
+      <rect x="0" y="0" width="265" height="32" rx="10" fill="#131D33"/>
+      <text x="12" y="22" font-size="13" font-weight="700" fill="#A5B4FC">«dataclass» PlanStep</text>
+      <text x="12" y="55" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ id: str</text>
+      <text x="12" y="75" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ action_type: str</text>
+      <text x="12" y="95" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ description: str</text>
+      <text x="12" y="115" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ tool_name: str | None</text>
+      <text x="12" y="135" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ parameters: dict[str, Any]</text>
+      <text x="12" y="155" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ approval_required: bool</text>
+      <line x1="8" y1="170" x2="257" y2="170" stroke="#1E2A44"/>
+      <text x="12" y="190" font-size="10.5" fill="#94A3B8">action_type in {api, cli,</text>
+      <text x="12" y="208" font-size="10.5" fill="#94A3B8">file, gui, question}</text>
+    </g>
+
+    <!-- SafetyDecision Contract -->
+    <g transform="translate(879, 55)">
+      <rect width="265" height="265" rx="10" fill="#0A0E1A" stroke="#233252"/>
+      <rect x="0" y="0" width="265" height="32" rx="10" fill="#131D33"/>
+      <text x="12" y="22" font-size="13" font-weight="700" fill="#F59E0B">«dataclass» SafetyDecision</text>
+      <text x="12" y="55" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ decision: str</text>
+      <text x="12" y="75" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ reason: str</text>
+      <text x="12" y="95" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ confidence: float = 1.0</text>
+      <text x="12" y="115" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ requires_confirm: bool</text>
+      <line x1="8" y1="130" x2="257" y2="130" stroke="#1E2A44"/>
+      <text x="12" y="150" font-size="10.5" font-weight="600" fill="#94A3B8">Decisions:</text>
+      <text x="12" y="170" font-size="10.5" fill="#10B981">• ALLOW: Execute immediately</text>
+      <text x="12" y="190" font-size="10.5" fill="#F59E0B">• REVIEW: Prompt user confirm</text>
+      <text x="12" y="210" font-size="10.5" fill="#EF4444">• DENY: Hard safety block</text>
+    </g>
+
+    <!-- ExecutionResult Contract -->
+    <g transform="translate(1164, 55)">
+      <rect width="252" height="265" rx="10" fill="#0A0E1A" stroke="#233252"/>
+      <rect x="0" y="0" width="252" height="32" rx="10" fill="#131D33"/>
+      <text x="12" y="22" font-size="13" font-weight="700" fill="#10B981">«dataclass» ExecutionResult</text>
+      <text x="12" y="55" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ status: str</text>
+      <text x="12" y="75" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ output: str</text>
+      <text x="12" y="95" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ exit_code: int | None</text>
+      <text x="12" y="115" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ logs: list[str]</text>
+      <text x="12" y="135" font-size="11" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ warnings: list[str]</text>
+      <line x1="8" y1="150" x2="244" y2="150" stroke="#1E2A44"/>
+      <text x="12" y="170" font-size="10.5" font-weight="600" fill="#94A3B8">Statuses:</text>
+      <text x="12" y="190" font-size="10.5" fill="#94A3B8">• success | failed</text>
+      <text x="12" y="210" font-size="10.5" fill="#94A3B8">• blocked | partial</text>
+    </g>
+  </g>
+
+  <!-- ==================== SECTION 2: CORE CLASS HIERARCHY & DETAILED METHODS ==================== -->
+  <g transform="translate(80, 555)">
+    <rect width="1440" height="490" rx="16" fill="url(#cardGradLLD)" stroke="#1F2A44" stroke-width="1.5" filter="url(#shadowLLD)"/>
+    <path d="M 0 16 Q 0 0 16 0 L 1424 0 Q 1440 0 1440 16 L 1440 40 L 0 40 Z" fill="#172138"/>
+    <text x="24" y="26" font-size="13" font-weight="800" fill="#6366F1" letter-spacing="1">2. DETAILED CLASS ARCHITECTURE &amp; METHOD SIGNATURES</text>
+
+    <!-- MarrowAssistant -->
+    <g transform="translate(24, 55)">
+      <rect width="330" height="415" rx="10" fill="#0A0E1A" stroke="#253556"/>
+      <rect x="0" y="0" width="330" height="34" rx="10" fill="#162038"/>
+      <text x="14" y="23" font-size="14" font-weight="700" fill="#FFFFFF">MarrowAssistant</text>
+      <text x="14" y="55" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#94A3B8">- model_provider: ModelProvider</text>
+      <text x="14" y="73" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#94A3B8">- planner: Planner</text>
+      <text x="14" y="91" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#94A3B8">- safety: RiskClassifier</text>
+      <text x="14" y="109" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#94A3B8">- tool_router: ToolRouter</text>
+      <text x="14" y="127" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#94A3B8">- executor: Executor</text>
+      <text x="14" y="145" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#94A3B8">- audit: AuditLogger</text>
+      <text x="14" y="163" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#94A3B8">- governor: ResourceGovernor</text>
+      <text x="14" y="181" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#94A3B8">- voice_engine: OfflineVoiceEngine</text>
+      <line x1="8" y1="195" x2="322" y2="195" stroke="#1E2A44"/>
+      <text x="14" y="215" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#A5B4FC">+ process(prompt, confirmed=False,</text>
+      <text x="32" y="233" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#A5B4FC">password=None) -> dict</text>
+      <text x="14" y="255" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#A5B4FC">+ execute_plan(plan: TaskPlan) -> dict</text>
+      <text x="14" y="275" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#A5B4FC">+ check_telemetry() -> TelemetryData</text>
+      <text x="14" y="295" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#A5B4FC">+ is_conversational(intent) -> bool</text>
+      <line x1="8" y1="310" x2="322" y2="310" stroke="#1E2A44"/>
+      <text x="14" y="330" font-size="10.5" fill="#94A3B8">Top-level orchestration facade.</text>
+      <text x="14" y="348" font-size="10.5" fill="#94A3B8">Coordinates cognitive flow, security</text>
+      <text x="14" y="366" font-size="10.5" fill="#94A3B8">gates, tool execution, and voice alerts.</text>
+    </g>
+
+    <!-- Planner & Safety -->
+    <g transform="translate(378, 55)">
+      <rect width="330" height="415" rx="10" fill="#0A0E1A" stroke="#253556"/>
+      <rect x="0" y="0" width="330" height="34" rx="10" fill="#162038"/>
+      <text x="14" y="23" font-size="14" font-weight="700" fill="#FFFFFF">Planner &amp; RiskClassifier</text>
+      
+      <!-- Planner section -->
+      <text x="14" y="55" font-size="11" font-weight="700" fill="#38BDF8">Planner (planner.py)</text>
+      <text x="14" y="75" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ plan(prompt: str) -> TaskPlan</text>
+      <text x="14" y="93" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ _map_intent(prompt: str) -> str</text>
+      <text x="14" y="111" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ _extract_parameters(prompt) -> dict</text>
+      <text x="14" y="129" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ _map_vm_creation(prompt) -> TaskPlan</text>
+      <text x="14" y="147" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ _map_model_management(p) -> TaskPlan</text>
+
+      <line x1="8" y1="165" x2="322" y2="165" stroke="#1E2A44"/>
+
+      <!-- Safety section -->
+      <text x="14" y="185" font-size="11" font-weight="700" fill="#F59E0B">RiskClassifier (safety.py)</text>
+      <text x="14" y="205" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ evaluate(step: PlanStep) -> SafetyDecision</text>
+      <text x="14" y="223" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ classify_risk(action_type) -> str</text>
+      <text x="14" y="241" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ is_destructive(cmd_str: str) -> bool</text>
+      <text x="14" y="259" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ requires_sudo(step: PlanStep) -> bool</text>
+
+      <line x1="8" y1="275" x2="322" y2="275" stroke="#1E2A44"/>
+      <text x="14" y="295" font-size="10.5" fill="#94A3B8">Strict separation of concerns:</text>
+      <text x="14" y="313" font-size="10.5" fill="#94A3B8">Planner proposes; Classifier decides.</text>
+      <text x="14" y="331" font-size="10.5" fill="#94A3B8">Policy gate blocks unvetted actions.</text>
+    </g>
+
+    <!-- OfflineModelManager & ResourceGovernor -->
+    <g transform="translate(732, 55)">
+      <rect width="340" height="415" rx="10" fill="#0A0E1A" stroke="#253556"/>
+      <rect x="0" y="0" width="340" height="34" rx="10" fill="#162038"/>
+      <text x="14" y="23" font-size="14" font-weight="700" fill="#FFFFFF">ModelManager &amp; Governor</text>
+
+      <!-- Model Manager -->
+      <text x="14" y="55" font-size="11" font-weight="700" fill="#10B981">OfflineModelManager (model_manager.py)</text>
+      <text x="14" y="75" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ discover_ollama_base_url() -> str</text>
+      <text x="14" y="93" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ is_available() -> bool</text>
+      <text x="14" y="111" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ download_model(name, cb, voice) -> tuple</text>
+      <text x="14" y="129" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ list_local_models_detailed() -> list[dict]</text>
+      <text x="14" y="147" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ delete_model(name: str) -> tuple[bool, str]</text>
+      <text x="14" y="165" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ start_service() -> tuple[bool, str]</text>
+
+      <line x1="8" y1="180" x2="332" y2="180" stroke="#1E2A44"/>
+
+      <!-- Resource Governor -->
+      <text x="14" y="200" font-size="11" font-weight="700" fill="#38BDF8">ResourceGovernor (governor.py)</text>
+      <text x="14" y="220" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ get_telemetry() -> TelemetryData</text>
+      <text x="14" y="238" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ is_safe_to_execute() -> tuple[bool, dict]</text>
+      <text x="14" y="256" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ enforce_limits() -> None</text>
+      <text x="14" y="274" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ detect_hypervisors() -> dict</text>
+
+      <line x1="8" y1="290" x2="332" y2="290" stroke="#1E2A44"/>
+      <text x="14" y="310" font-size="10.5" fill="#94A3B8">Models stored in ~/.ollama/models</text>
+      <text x="14" y="328" font-size="10.5" fill="#94A3B8">Proactive throttling protects CPU/RAM</text>
+    </g>
+
+    <!-- VoiceEngine & VectorDB -->
+    <g transform="translate(1096, 55)">
+      <rect width="320" height="415" rx="10" fill="#0A0E1A" stroke="#253556"/>
+      <rect x="0" y="0" width="320" height="34" rx="10" fill="#162038"/>
+      <text x="14" y="23" font-size="14" font-weight="700" fill="#FFFFFF">VoiceEngine &amp; VectorDB</text>
+
+      <!-- Voice Engine -->
+      <text x="14" y="55" font-size="11" font-weight="700" fill="#F59E0B">OfflineVoiceEngine (voice_engine.py)</text>
+      <text x="14" y="75" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ synthesize_neural_audio() -> bytes</text>
+      <text x="14" y="93" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ synthesize_offline_wav() -> bytes</text>
+      <text x="14" y="111" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ speak(text: str) -> VoiceStatus</text>
+      <text x="14" y="129" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ set_profile(name: str) -> None</text>
+      <text x="14" y="147" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ status() -> dict[str, Any]</text>
+
+      <line x1="8" y1="165" x2="312" y2="165" stroke="#1E2A44"/>
+
+      <!-- Vector DB -->
+      <text x="14" y="185" font-size="11" font-weight="700" fill="#A5B4FC">VectorDatabase (vector_db.py)</text>
+      <text x="14" y="205" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ SemanticEmbedder.encode(text) -> list</text>
+      <text x="14" y="223" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ add_document(text, meta) -> str</text>
+      <text x="14" y="241" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ similarity_search(query, k) -> list</text>
+      <text x="14" y="259" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#E2E8F0">+ cosine_similarity(v1, v2) -> float</text>
+
+      <line x1="8" y1="275" x2="312" y2="275" stroke="#1E2A44"/>
+      <text x="14" y="295" font-size="10.5" fill="#94A3B8">Studio-grade Edge-TTS neural speech.</text>
+      <text x="14" y="313" font-size="10.5" fill="#94A3B8">Zero-dependency 256-d offline embeddings</text>
+      <text x="14" y="331" font-size="10.5" fill="#94A3B8">with SQLite binary vector storage.</text>
+    </g>
+  </g>
+
+  <!-- ==================== SECTION 3: SEQUENCE & INTERACTION FLOWS ==================== -->
+  <g transform="translate(80, 1070)">
+    <rect width="1440" height="1220" rx="16" fill="url(#cardGradLLD)" stroke="#1F2A44" stroke-width="1.5" filter="url(#shadowLLD)"/>
+    <path d="M 0 16 Q 0 0 16 0 L 1424 0 Q 1440 0 1440 16 L 1440 40 L 0 40 Z" fill="#172138"/>
+    <text x="24" y="26" font-size="13" font-weight="800" fill="#10B981" letter-spacing="1">3. DETAILED EXECUTION &amp; INTERACTION SEQUENCE DIAGRAMS</text>
+
+    <!-- Sequence 1: Prompt-to-Execution Flow with Safety Gate -->
+    <g transform="translate(24, 60)">
+      <text x="0" y="0" font-size="14" font-weight="700" fill="#FFFFFF">Sequence 3.1: Task Execution with Zero-Trust Safety Approval Gate</text>
+      
+      <!-- Lifeline Headers -->
+      <g transform="translate(0, 20)">
+        <rect x="0" y="0" width="120" height="30" rx="6" fill="#1E293B" stroke="#334155"/>
+        <text x="60" y="19" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">User / UI</text>
+        <line x1="60" y1="30" x2="60" y2="460" stroke="#334155" stroke-dasharray="4 4"/>
+
+        <rect x="230" y="0" width="130" height="30" rx="6" fill="#1E293B" stroke="#334155"/>
+        <text x="295" y="19" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">MarrowAssistant</text>
+        <line x1="295" y1="30" x2="295" y2="460" stroke="#334155" stroke-dasharray="4 4"/>
+
+        <rect x="470" y="0" width="110" height="30" rx="6" fill="#1E293B" stroke="#334155"/>
+        <text x="525" y="19" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">Planner</text>
+        <line x1="525" y1="30" x2="525" y2="460" stroke="#334155" stroke-dasharray="4 4"/>
+
+        <rect x="690" y="0" width="130" height="30" rx="6" fill="#1E293B" stroke="#334155"/>
+        <text x="755" y="19" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">RiskClassifier</text>
+        <line x1="755" y1="30" x2="755" y2="460" stroke="#334155" stroke-dasharray="4 4"/>
+
+        <rect x="930" y="0" width="120" height="30" rx="6" fill="#1E293B" stroke="#334155"/>
+        <text x="990" y="19" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">ToolRouter</text>
+        <line x1="990" y1="30" x2="990" y2="460" stroke="#334155" stroke-dasharray="4 4"/>
+
+        <rect x="1160" y="0" width="110" height="30" rx="6" fill="#1E293B" stroke="#334155"/>
+        <text x="1215" y="19" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">Executor</text>
+        <line x1="1215" y1="30" x2="1215" y2="460" stroke="#334155" stroke-dasharray="4 4"/>
+
+        <rect x="1300" y="0" width="90" height="30" rx="6" fill="#1E293B" stroke="#334155"/>
+        <text x="1345" y="19" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">AuditLog</text>
+        <line x1="1345" y1="30" x2="1345" y2="460" stroke="#334155" stroke-dasharray="4 4"/>
+      </g>
+
+      <!-- Message Arrows -->
+      <g transform="translate(0, 70)">
+        <!-- 1: Send prompt -->
+        <line x1="60" y1="20" x2="295" y2="20" stroke="#6366F1" stroke-width="1.8" marker-end="url(#arrowIndigo)"/>
+        <text x="175" y="14" font-size="10.5" fill="#E2E8F0" text-anchor="middle">1. process(prompt, confirmed=False)</text>
+
+        <!-- 2: Plan -->
+        <line x1="295" y1="50" x2="525" y2="50" stroke="#6366F1" stroke-width="1.8" marker-end="url(#arrowIndigo)"/>
+        <text x="410" y="44" font-size="10.5" fill="#E2E8F0" text-anchor="middle">2. plan(prompt)</text>
+
+        <!-- 3: Return plan -->
+        <line x1="525" y1="80" x2="295" y2="80" stroke="#38BDF8" stroke-dasharray="3 3" stroke-width="1.5" marker-end="url(#arrowCyanLLD)"/>
+        <text x="410" y="74" font-size="10.5" fill="#BAE6FD" text-anchor="middle">3. TaskPlan (steps, risk_level)</text>
+
+        <!-- 4: Evaluate safety -->
+        <line x1="295" y1="110" x2="755" y2="110" stroke="#F59E0B" stroke-width="1.8" marker-end="url(#arrowIndigo)"/>
+        <text x="525" y="104" font-size="10.5" fill="#FDE68A" text-anchor="middle">4. evaluate(step)</text>
+
+        <!-- 5: Decision -->
+        <line x1="755" y1="140" x2="295" y2="140" stroke="#F59E0B" stroke-dasharray="3 3" stroke-width="1.5" marker-end="url(#arrowIndigo)"/>
+        <text x="525" y="134" font-size="10.5" fill="#FDE68A" text-anchor="middle">5. SafetyDecision(requires_confirmation=True)</text>
+
+        <!-- Alt: Confirmation required -->
+        <rect x="50" y="165" width="720" height="75" rx="6" fill="#241908" stroke="#F59E0B" stroke-dasharray="3 3"/>
+        <text x="60" y="182" font-size="10" font-weight="700" fill="#F59E0B">[ALT: HIGH-RISK CONFIRMATION PATH]</text>
+        <line x1="295" y1="195" x2="60" y2="195" stroke="#F59E0B" stroke-width="1.8" marker-end="url(#arrowIndigo)"/>
+        <text x="175" y="190" font-size="10.5" fill="#FDE68A" text-anchor="middle">requires_confirmation card displayed</text>
+        <line x1="60" y1="225" x2="295" y2="225" stroke="#10B981" stroke-width="1.8" marker-end="url(#arrowGreenLLD)"/>
+        <text x="175" y="220" font-size="10.5" fill="#A7F3D0" text-anchor="middle">confirmAction(proceed=True, password=pwd)</text>
+
+        <!-- 6: Route tool -->
+        <line x1="295" y1="260" x2="990" y2="260" stroke="#10B981" stroke-width="1.8" marker-end="url(#arrowGreenLLD)"/>
+        <text x="640" y="254" font-size="10.5" fill="#A7F3D0" text-anchor="middle">6. route(step, password=pwd) -> ToolCall</text>
+
+        <!-- 7: Execute -->
+        <line x1="990" y1="290" x2="1215" y2="290" stroke="#10B981" stroke-width="1.8" marker-end="url(#arrowGreenLLD)"/>
+        <text x="1100" y="284" font-size="10.5" fill="#A7F3D0" text-anchor="middle">7. execute(tool_call)</text>
+
+        <!-- 8: Return result -->
+        <line x1="1215" y1="320" x2="295" y2="320" stroke="#38BDF8" stroke-dasharray="3 3" stroke-width="1.5" marker-end="url(#arrowCyanLLD)"/>
+        <text x="755" y="314" font-size="10.5" fill="#BAE6FD" text-anchor="middle">8. ExecutionResult(status="success", output="...")</text>
+
+        <!-- 9: Write audit -->
+        <line x1="295" y1="350" x2="1345" y2="350" stroke="#6366F1" stroke-width="1.8" marker-end="url(#arrowIndigo)"/>
+        <text x="820" y="344" font-size="10.5" fill="#C7D2FE" text-anchor="middle">9. log_action(prompt, plan, decision, result)</text>
+
+        <!-- 10: Feedback -->
+        <line x1="295" y1="380" x2="60" y2="380" stroke="#10B981" stroke-width="1.8" marker-end="url(#arrowGreenLLD)"/>
+        <text x="175" y="374" font-size="10.5" fill="#A7F3D0" text-anchor="middle">10. UI Update + Voice Output</text>
+      </g>
+    </g>
+
+    <!-- Sequence 2: Real-time Model Pulling & SSE Streaming -->
+    <g transform="translate(24, 570)">
+      <text x="0" y="0" font-size="14" font-weight="700" fill="#FFFFFF">Sequence 3.2: Real-Time Model Pulling &amp; Server-Sent Event (SSE) Streaming</text>
+      
+      <g transform="translate(0, 20)">
+        <rect x="0" y="0" width="140" height="30" rx="6" fill="#1E293B" stroke="#334155"/>
+        <text x="70" y="19" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">Web Client (SSE)</text>
+        <line x1="70" y1="30" x2="70" y2="280" stroke="#334155" stroke-dasharray="4 4"/>
+
+        <rect x="350" y="0" width="160" height="30" rx="6" fill="#1E293B" stroke="#334155"/>
+        <text x="430" y="19" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">MarrowWebHandler</text>
+        <line x1="430" y1="30" x2="430" y2="280" stroke="#334155" stroke-dasharray="4 4"/>
+
+        <rect x="750" y="0" width="170" height="30" rx="6" fill="#1E293B" stroke="#334155"/>
+        <text x="835" y="19" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">OfflineModelManager</text>
+        <line x1="835" y1="30" x2="835" y2="280" stroke="#334155" stroke-dasharray="4 4"/>
+
+        <rect x="1170" y="0" width="150" height="30" rx="6" fill="#1E293B" stroke="#334155"/>
+        <text x="1245" y="19" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">Ollama REST API</text>
+        <line x1="1245" y1="30" x2="1245" y2="280" stroke="#334155" stroke-dasharray="4 4"/>
+      </g>
+
+      <g transform="translate(0, 70)">
+        <!-- 1: EventSource connect -->
+        <line x1="70" y1="20" x2="430" y2="20" stroke="#38BDF8" stroke-width="1.8" marker-end="url(#arrowCyanLLD)"/>
+        <text x="250" y="14" font-size="10.5" fill="#BAE6FD" text-anchor="middle">1. GET /api/pull_stream?model=llama3.2</text>
+
+        <!-- 2: Download model -->
+        <line x1="430" y1="50" x2="835" y2="50" stroke="#6366F1" stroke-width="1.8" marker-end="url(#arrowIndigo)"/>
+        <text x="632" y="44" font-size="10.5" fill="#C7D2FE" text-anchor="middle">2. download_model(model_name, progress_cb)</text>
+
+        <!-- 3: POST to Ollama -->
+        <line x1="835" y1="80" x2="1245" y2="80" stroke="#10B981" stroke-width="1.8" marker-end="url(#arrowGreenLLD)"/>
+        <text x="1040" y="74" font-size="10.5" fill="#A7F3D0" text-anchor="middle">3. POST /api/pull {"name":"llama3.2","stream":true}</text>
+
+        <!-- 4: Stream chunks -->
+        <line x1="1245" y1="110" x2="835" y2="110" stroke="#10B981" stroke-dasharray="3 3" stroke-width="1.5" marker-end="url(#arrowGreenLLD)"/>
+        <text x="1040" y="104" font-size="10.5" fill="#A7F3D0" text-anchor="middle">4. stream events (completed, total)</text>
+
+        <!-- 5: Progress callback to SSE -->
+        <line x1="835" y1="140" x2="430" y2="140" stroke="#38BDF8" stroke-width="1.8" marker-end="url(#arrowCyanLLD)"/>
+        <text x="632" y="134" font-size="10.5" fill="#BAE6FD" text-anchor="middle">5. on_progress(pct, detail, comp, tot)</text>
+
+        <!-- 6: SSE event to client -->
+        <line x1="430" y1="170" x2="70" y2="170" stroke="#38BDF8" stroke-dasharray="3 3" stroke-width="1.5" marker-end="url(#arrowCyanLLD)"/>
+        <text x="250" y="164" font-size="10.5" fill="#BAE6FD" text-anchor="middle">6. data: {"percent": 50.0, "detail": "...", "spoken": "..."}</text>
+
+        <!-- 7: Milestones & completion -->
+        <line x1="835" y1="200" x2="430" y2="200" stroke="#10B981" stroke-width="1.8" marker-end="url(#arrowGreenLLD)"/>
+        <text x="632" y="194" font-size="10.5" fill="#A7F3D0" text-anchor="middle">7. download finished (verified locally)</text>
+
+        <line x1="430" y1="230" x2="70" y2="230" stroke="#10B981" stroke-width="1.8" marker-end="url(#arrowGreenLLD)"/>
+        <text x="250" y="224" font-size="10.5" fill="#A7F3D0" text-anchor="middle">8. data: {"done": true} -> Dropdown auto-refreshed</text>
+      </g>
+    </g>
+
+    <!-- Sequence 3: Natural Neural Voice Pipeline -->
+    <g transform="translate(24, 910)">
+      <text x="0" y="0" font-size="14" font-weight="700" fill="#FFFFFF">Sequence 3.3: Natural Studio-Quality Neural Voice Synthesis Pipeline</text>
+
+      <g transform="translate(0, 20)">
+        <rect x="0" y="0" width="130" height="30" rx="6" fill="#1E293B" stroke="#334155"/>
+        <text x="65" y="19" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">Client UI / Audio</text>
+        <line x1="65" y1="30" x2="65" y2="230" stroke="#334155" stroke-dasharray="4 4"/>
+
+        <rect x="360" y="0" width="150" height="30" rx="6" fill="#1E293B" stroke="#334155"/>
+        <text x="435" y="19" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">/api/tts (WebHandler)</text>
+        <line x1="435" y1="30" x2="435" y2="230" stroke="#334155" stroke-dasharray="4 4"/>
+
+        <rect x="760" y="0" width="160" height="30" rx="6" fill="#1E293B" stroke="#334155"/>
+        <text x="840" y="19" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">OfflineVoiceEngine</text>
+        <line x1="840" y1="30" x2="840" y2="230" stroke="#334155" stroke-dasharray="4 4"/>
+
+        <rect x="1170" y="0" width="150" height="30" rx="6" fill="#1E293B" stroke="#334155"/>
+        <text x="1245" y="19" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">Neural Edge-TTS / SAPI</text>
+        <line x1="1245" y1="30" x2="1245" y2="230" stroke="#334155" stroke-dasharray="4 4"/>
+      </g>
+
+      <g transform="translate(0, 70)">
+        <line x1="65" y1="20" x2="435" y2="20" stroke="#F59E0B" stroke-width="1.8" marker-end="url(#arrowIndigo)"/>
+        <text x="250" y="14" font-size="10.5" fill="#FDE68A" text-anchor="middle">1. GET /api/tts?voice=indian_female&amp;text=...</text>
+
+        <line x1="435" y1="50" x2="840" y2="50" stroke="#6366F1" stroke-width="1.8" marker-end="url(#arrowIndigo)"/>
+        <text x="637" y="44" font-size="10.5" fill="#C7D2FE" text-anchor="middle">2. synthesize_neural_audio(clean_text, profile)</text>
+
+        <line x1="840" y1="80" x2="1245" y2="80" stroke="#10B981" stroke-width="1.8" marker-end="url(#arrowGreenLLD)"/>
+        <text x="1042" y="74" font-size="10.5" fill="#A7F3D0" text-anchor="middle">3. edge_tts.Communicate(clean_text, "en-IN-NeerjaNeural")</text>
+
+        <line x1="1245" y1="110" x2="840" y2="110" stroke="#10B981" stroke-dasharray="3 3" stroke-width="1.5" marker-end="url(#arrowGreenLLD)"/>
+        <text x="1042" y="104" font-size="10.5" fill="#A7F3D0" text-anchor="middle">4. stream MP3 audio bytes (>200 B)</text>
+
+        <line x1="840" y1="140" x2="435" y2="140" stroke="#38BDF8" stroke-width="1.8" marker-end="url(#arrowCyanLLD)"/>
+        <text x="637" y="134" font-size="10.5" fill="#BAE6FD" text-anchor="middle">5. Cache in _AUDIO_CACHE &amp; return audio_data</text>
+
+        <line x1="435" y1="170" x2="65" y2="170" stroke="#10B981" stroke-width="1.8" marker-end="url(#arrowGreenLLD)"/>
+        <text x="250" y="164" font-size="10.5" fill="#A7F3D0" text-anchor="middle">6. HTTP 200 (audio/mpeg) -> Audio playback + Waveform animation</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Footer -->
+  <text x="800" y="2315" font-size="12" font-weight="600" fill="#64748B" text-anchor="middle">MarrowAI Low-Level Design (LLD) • Generated for Project Documentation • Strictly Confidential &amp; Verified</text>
+</svg>

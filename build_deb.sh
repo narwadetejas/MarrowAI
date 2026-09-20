@@ -5,10 +5,14 @@ cd "$(dirname "$0")"
 VERSION="0.2.0"
 ARCH="amd64"
 PACKAGE_NAME="marrowai"
-BUILD_ROOT="dist/${PACKAGE_NAME}_${VERSION}_${ARCH}"
 OUTPUT_DEB="${PACKAGE_NAME}_${VERSION}_${ARCH}.deb"
 
-rm -rf "$BUILD_ROOT" "$OUTPUT_DEB"
+# Use /tmp for staging to preserve Linux POSIX permissions even when building on NTFS mounts (e.g. WSL)
+STAGING_DIR="$(mktemp -d /tmp/marrowai_deb_XXXXXX)"
+BUILD_ROOT="${STAGING_DIR}/${PACKAGE_NAME}_${VERSION}_${ARCH}"
+
+trap 'rm -rf "$STAGING_DIR"' EXIT
+
 mkdir -p "$BUILD_ROOT/DEBIAN" "$BUILD_ROOT/usr/bin" "$BUILD_ROOT/opt/marrowai/python"
 
 cp -R src/marrowai "$BUILD_ROOT/opt/marrowai/python/"
@@ -67,6 +71,12 @@ export PYTHONPATH="/opt/marrowai/python${PYTHONPATH:+:${PYTHONPATH}}"
 exec python3 -m marrowai.gui "$@"
 EOF
 
+cat > "$BUILD_ROOT/usr/bin/marrowai-web" <<'EOF'
+#!/usr/bin/env bash
+export PYTHONPATH="/opt/marrowai/python${PYTHONPATH:+:${PYTHONPATH}}"
+exec python3 -m marrowai.web_gui "$@"
+EOF
+
 cat > "$BUILD_ROOT/usr/bin/marrowai-scaffold" <<'EOF'
 #!/usr/bin/env bash
 export PYTHONPATH="/opt/marrowai/python${PYTHONPATH:+:${PYTHONPATH}}"
@@ -90,7 +100,11 @@ chmod 755 "$BUILD_ROOT/DEBIAN" "$BUILD_ROOT/opt" "$BUILD_ROOT/opt/marrowai" "$BU
 chmod 644 "$BUILD_ROOT/DEBIAN/control"
 chmod 755 "$BUILD_ROOT/DEBIAN/postinst"
 
-dpkg-deb --build --root-owner-group "$BUILD_ROOT" "$OUTPUT_DEB"
+mkdir -p dist
+dpkg-deb --build --root-owner-group "$BUILD_ROOT" "${STAGING_DIR}/${OUTPUT_DEB}"
 
-printf '\nCreated: %s\n' "$OUTPUT_DEB"
+cp "${STAGING_DIR}/${OUTPUT_DEB}" "$OUTPUT_DEB"
+cp "${STAGING_DIR}/${OUTPUT_DEB}" "dist/${OUTPUT_DEB}"
+
+printf '\nCreated: %s and dist/%s\n' "$OUTPUT_DEB" "$OUTPUT_DEB"
 ls -lh "$OUTPUT_DEB"

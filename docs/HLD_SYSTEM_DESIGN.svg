@@ -1,0 +1,470 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 2150" width="1600" height="2150" style="background:#090C15; font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,sans-serif;">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090C15"/>
+      <stop offset="50%" stop-color="#0E1424"/>
+      <stop offset="100%" stop-color="#080A10"/>
+    </linearGradient>
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="50%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141C30" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#0E1424" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="accentCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+    <linearGradient id="accentGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="accentAmber" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <linearGradient id="accentPurple" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#6366F1"/>
+    </linearGradient>
+
+    <!-- Filters -->
+    <filter id="dropShadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+    <filter id="glowIndigo" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <!-- Arrow Marker -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#6366F1"/>
+    </marker>
+    <marker id="arrowCyan" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38BDF8"/>
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#10B981"/>
+    </marker>
+    <marker id="arrowAmber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#F59E0B"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1600" height="2150" fill="url(#bgGrad)"/>
+  <circle cx="200" cy="150" r="300" fill="#6366F1" opacity="0.04" filter="blur(60px)"/>
+  <circle cx="1400" cy="900" r="400" fill="#38BDF8" opacity="0.03" filter="blur(80px)"/>
+  <circle cx="300" cy="1700" r="350" fill="#8B5CF6" opacity="0.04" filter="blur(70px)"/>
+
+  <!-- ==================== HEADER BLOCK ==================== -->
+  <g transform="translate(80, 50)">
+    <rect width="1440" height="110" rx="16" fill="#111728" stroke="#222F4C" stroke-width="1.5" filter="url(#dropShadow)"/>
+    <rect x="2" y="2" width="6" height="106" rx="3" fill="url(#headerGrad)"/>
+    
+    <text x="36" y="44" font-size="26" font-weight="800" fill="#FFFFFF" letter-spacing="-0.5">MarrowAI — High-Level Architecture (HLD)</text>
+    <text x="36" y="74" font-size="14" font-weight="500" fill="#94A3B8">Autonomous, Local-First Linux Workstation Assistant | System Topology &amp; Component Pipeline</text>
+    
+    <g transform="translate(1080, 28)">
+      <rect width="105" height="28" rx="14" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+      <circle cx="14" cy="14" r="4" fill="#10B981"/>
+      <text x="26" y="19" font-size="11" font-weight="700" fill="#E2E8F0">LOCAL-FIRST</text>
+      
+      <rect x="118" y="0" width="105" height="28" rx="14" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+      <circle cx="132" cy="14" r="4" fill="#6366F1"/>
+      <text x="144" y="19" font-size="11" font-weight="700" fill="#E2E8F0">ZERO-TRUST</text>
+
+      <rect x="236" y="0" width="85" height="28" rx="14" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+      <circle cx="250" cy="14" r="4" fill="#38BDF8"/>
+      <text x="262" y="19" font-size="11" font-weight="700" fill="#E2E8F0">v0.2.0</text>
+    </g>
+  </g>
+
+  <!-- ==================== LAYER 1: CLIENT & PRESENTATION LAYER ==================== -->
+  <g transform="translate(80, 190)">
+    <rect width="1440" height="230" rx="16" fill="url(#cardGrad)" stroke="#1F2A44" stroke-width="1.5" filter="url(#dropShadow)"/>
+    <path d="M 0 16 Q 0 0 16 0 L 1424 0 Q 1440 0 1440 16 L 1440 40 L 0 40 Z" fill="#172138"/>
+    <text x="24" y="26" font-size="13" font-weight="800" fill="#38BDF8" letter-spacing="1">LAYER 1: USER CLIENT &amp; PRESENTATION INTERFACES</text>
+
+    <!-- 1.1 Web Workstation -->
+    <g transform="translate(24, 55)">
+      <rect width="325" height="150" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">Web GUI Workstation</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#6366F1">ThreadingHTTPServer (:8765)</text>
+      <text x="18" y="72" font-size="11" fill="#94A3B8">• Dark Obsidian Frosted Glass UI</text>
+      <text x="18" y="90" font-size="11" fill="#94A3B8">• Dynamic Model Selector (Installed/Ready)</text>
+      <text x="18" y="108" font-size="11" fill="#94A3B8">• Server-Sent Events (/api/pull_stream)</text>
+      <text x="18" y="126" font-size="11" fill="#94A3B8">• Speech Waveform &amp; Auto-Listen Loop</text>
+    </g>
+
+    <!-- 1.2 Desktop GUI -->
+    <g transform="translate(375, 55)">
+      <rect width="325" height="150" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">Tkinter Desktop GUI</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#38BDF8">MarrowAIWindow (Clam Engine)</text>
+      <text x="18" y="72" font-size="11" fill="#94A3B8">• Real-time Telemetry &amp; System Meters</text>
+      <text x="18" y="90" font-size="11" fill="#94A3B8">• Grouped Installed Combobox Selector</text>
+      <text x="18" y="108" font-size="11" fill="#94A3B8">• Determinate Progressbar (0-100%)</text>
+      <text x="18" y="126" font-size="11" fill="#94A3B8">• Security Audit Log Modal Viewer</text>
+    </g>
+
+    <!-- 1.3 CLI Suite -->
+    <g transform="translate(725, 55)">
+      <rect width="325" height="150" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">CLI &amp; Interactive Shell</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#10B981">marrowai / marrowai-chat</text>
+      <text x="18" y="72" font-size="11" fill="#94A3B8">• Interactive REPL with Safety Prompts</text>
+      <text x="18" y="90" font-size="11" fill="#94A3B8">• Headless Batch &amp; Script Dispatch</text>
+      <text x="18" y="108" font-size="11" fill="#94A3B8">• marrowai-doctor (Diagnostic Probe)</text>
+      <text x="18" y="126" font-size="11" fill="#94A3B8">• marrowai-scaffold (Workspace Init)</text>
+    </g>
+
+    <!-- 1.4 Voice Interface -->
+    <g transform="translate(1075, 55)">
+      <rect width="340" height="150" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">Voice Ingest &amp; Natural Audio</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#F59E0B">Web Speech + Neural Edge-TTS</text>
+      <text x="18" y="72" font-size="11" fill="#94A3B8">• Web Speech Dictation (en-IN / hi-IN)</text>
+      <text x="18" y="90" font-size="11" fill="#94A3B8">• Microsoft Neural TTS (Studio Quality)</text>
+      <text x="18" y="108" font-size="11" fill="#94A3B8">• Conversational Turn-Taking (Auto-Listen)</text>
+      <text x="18" y="126" font-size="11" fill="#94A3B8">• Sub-5ms In-Memory LRU Audio Cache</text>
+    </g>
+  </g>
+
+  <!-- Connectors Layer 1 -> Layer 2 -->
+  <line x1="800" y1="420" x2="800" y2="455" stroke="#6366F1" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <rect x="710" y="426" width="180" height="22" rx="6" fill="#1A233A" stroke="#374872" stroke-width="1"/>
+  <text x="722" y="441" font-size="10.5" font-weight="700" fill="#C7D2FE">Typed UserInput Payload</text>
+
+  <!-- ==================== LAYER 2: MULTIMODAL INGESTION & NORMALIZATION ==================== -->
+  <g transform="translate(80, 460)">
+    <rect width="1440" height="130" rx="16" fill="url(#cardGrad)" stroke="#1F2A44" stroke-width="1.5" filter="url(#dropShadow)"/>
+    <path d="M 0 16 Q 0 0 16 0 L 1424 0 Q 1440 0 1440 16 L 1440 36 L 0 36 Z" fill="#172138"/>
+    <text x="24" y="24" font-size="13" font-weight="800" fill="#38BDF8" letter-spacing="1">LAYER 2: MULTIMODAL INGESTION &amp; NORMALIZATION</text>
+
+    <!-- STT -->
+    <g transform="translate(24, 48)">
+      <rect width="440" height="68" rx="8" fill="#0D1322" stroke="#22304E"/>
+      <text x="16" y="28" font-size="13" font-weight="700" fill="#FFFFFF">Speech-To-Text (STT) Abstraction</text>
+      <text x="16" y="48" font-size="11" fill="#94A3B8">Browser SpeechRec API | FFmpeg pipeline fallback | Audio chunk validation</text>
+    </g>
+
+    <!-- Normalizer -->
+    <g transform="translate(488, 48)">
+      <rect width="460" height="68" rx="8" fill="#0D1322" stroke="#22304E"/>
+      <text x="16" y="28" font-size="13" font-weight="700" fill="#FFFFFF">Input Normalizer &amp; Intent Classifier</text>
+      <text x="16" y="48" font-size="11" fill="#94A3B8">Sanitizes control tokens | Classifies intent (Conversational vs OS Execution)</text>
+    </g>
+
+    <!-- Context -->
+    <g transform="translate(972, 48)">
+      <rect width="440" height="68" rx="8" fill="#0D1322" stroke="#22304E"/>
+      <text x="16" y="28" font-size="13" font-weight="700" fill="#FFFFFF">Context &amp; Session Memory Store</text>
+      <text x="16" y="48" font-size="11" fill="#94A3B8">Session history | Active model selection | Security confirmation context</text>
+    </g>
+  </g>
+
+  <!-- Connectors Layer 2 -> Layer 3 -->
+  <line x1="800" y1="590" x2="800" y2="625" stroke="#6366F1" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <rect x="690" y="596" width="220" height="22" rx="6" fill="#1A233A" stroke="#374872" stroke-width="1"/>
+  <text x="702" y="611" font-size="10.5" font-weight="700" fill="#C7D2FE">Sanitized Prompt + Session Context</text>
+
+  <!-- ==================== LAYER 3: COGNITIVE & PLANNING ENGINE (LLM OUTSIDE PRIVILEGED PATH) ==================== -->
+  <g transform="translate(80, 630)">
+    <rect width="1440" height="260" rx="16" fill="url(#cardGrad)" stroke="#1F2A44" stroke-width="1.5" filter="url(#dropShadow)"/>
+    <path d="M 0 16 Q 0 0 16 0 L 1424 0 Q 1440 0 1440 16 L 1440 40 L 0 40 Z" fill="#172138"/>
+    <text x="24" y="26" font-size="13" font-weight="800" fill="#6366F1" letter-spacing="1">LAYER 3: COGNITIVE &amp; PLANNING ENGINE (LLM OUTSIDE PRIVILEGED PATH)</text>
+
+    <!-- Assistant Facade -->
+    <g transform="translate(24, 55)">
+      <rect width="360" height="185" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">MarrowAssistant Facade</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#6366F1">Core Orchestrator (assistant.py)</text>
+      <text x="18" y="74" font-size="11" fill="#94A3B8">• Manages end-to-end request lifecycle</text>
+      <text x="18" y="94" font-size="11" fill="#94A3B8">• Enforces deterministic planning dispatch</text>
+      <text x="18" y="114" font-size="11" fill="#94A3B8">• Handles conversational vs task branches</text>
+      <text x="18" y="134" font-size="11" fill="#94A3B8">• Intercepts interactive security confirmations</text>
+      <text x="18" y="154" font-size="11" fill="#94A3B8">• Triggers voice narration &amp; UI responses</text>
+    </g>
+
+    <!-- Planner -->
+    <g transform="translate(410, 55)">
+      <rect width="340" height="185" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">Autonomous Planner</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#38BDF8">Deterministic Task Decomposition</text>
+      <text x="18" y="74" font-size="11" fill="#94A3B8">• Regex + Semantic intent recognition</text>
+      <text x="18" y="94" font-size="11" fill="#94A3B8">• VM creation pipeline planning (Arch/Ubuntu)</text>
+      <text x="18" y="114" font-size="11" fill="#94A3B8">• Project scaffolding &amp; test plan generation</text>
+      <text x="18" y="134" font-size="11" fill="#94A3B8">• Model pull &amp; delete plan mapping</text>
+      <text x="18" y="154" font-size="11" fill="#94A3B8">• Emits strictly typed TaskPlan data contract</text>
+    </g>
+
+    <!-- Model Provider -->
+    <g transform="translate(775, 55)">
+      <rect width="320" height="185" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">Model Provider Layer</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#10B981">OllamaProvider / LocalModel</text>
+      <text x="18" y="74" font-size="11" fill="#94A3B8">• Dynamic endpoint auto-discovery</text>
+      <text x="18" y="94" font-size="11" fill="#94A3B8">• Connects to Ollama REST runtime</text>
+      <text x="18" y="114" font-size="11" fill="#94A3B8">• JSON schema validation enforcement</text>
+      <text x="18" y="134" font-size="11" fill="#94A3B8">• Fallback handling for offline runtimes</text>
+      <text x="18" y="154" font-size="11" fill="#94A3B8">• Strictly separated from execution path</text>
+    </g>
+
+    <!-- Typed Contract Guard -->
+    <g transform="translate(1120, 55)">
+      <rect width="295" height="185" rx="12" fill="#0D1322" stroke="#F59E0B" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#F59E0B">Typed Data Contracts</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#CBD5E1">interfaces.py Validation Gate</text>
+      <text x="18" y="74" font-size="11" fill="#94A3B8">• TaskPlan (id, intent, risk_level)</text>
+      <text x="18" y="94" font-size="11" fill="#94A3B8">• PlanStep (tool_name, parameters)</text>
+      <text x="18" y="114" font-size="11" fill="#94A3B8">• NO raw shell string emission</text>
+      <text x="18" y="134" font-size="11" fill="#94A3B8">• Formal parameters validation</text>
+      <text x="18" y="154" font-size="11" fill="#94A3B8">• Immutable plan representation</text>
+    </g>
+  </g>
+
+  <!-- Connectors Layer 3 -> Layer 4 -->
+  <line x1="800" y1="890" x2="800" y2="925" stroke="#F59E0B" stroke-width="2.5" marker-end="url(#arrowAmber)"/>
+  <rect x="680" y="896" width="240" height="22" rx="6" fill="#1A233A" stroke="#374872" stroke-width="1"/>
+  <text x="692" y="911" font-size="10.5" font-weight="700" fill="#FDE68A">TaskPlan (Unverified Candidate)</text>
+
+  <!-- ==================== LAYER 4: SAFETY, SECURITY & GOVERNANCE GATEWAY ==================== -->
+  <g transform="translate(80, 930)">
+    <rect width="1440" height="230" rx="16" fill="url(#cardGrad)" stroke="#F59E0B" stroke-width="1.8" filter="url(#dropShadow)"/>
+    <path d="M 0 16 Q 0 0 16 0 L 1424 0 Q 1440 0 1440 16 L 1440 40 L 0 40 Z" fill="#241B10"/>
+    <text x="24" y="26" font-size="13" font-weight="800" fill="#F59E0B" letter-spacing="1">LAYER 4: ZERO-TRUST SAFETY, SECURITY &amp; GOVERNANCE GATEWAY</text>
+
+    <!-- Risk Classifier -->
+    <g transform="translate(24, 55)">
+      <rect width="330" height="155" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">Risk Classifier</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#38BDF8">Three-Tier Classification</text>
+      <text x="18" y="74" font-size="11" fill="#10B981">🟢 LOW: Safe reads, telemetry, status queries</text>
+      <text x="18" y="94" font-size="11" fill="#F59E0B">🟡 MEDIUM: File scaffolding, doc generation</text>
+      <text x="18" y="114" font-size="11" fill="#EF4444">🔴 HIGH: Sudo, VM creation, deletion, packages</text>
+      <text x="18" y="136" font-size="11" fill="#94A3B8">• Evaluates action_type, tool, and target args</text>
+    </g>
+
+    <!-- Policy Evaluator -->
+    <g transform="translate(378, 55)">
+      <rect width="330" height="155" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">Safety Policy Gate</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#F59E0B">ALLOW / REVIEW / DENY</text>
+      <text x="18" y="74" font-size="11" fill="#94A3B8">• Checks against strict policy rules</text>
+      <text x="18" y="94" font-size="11" fill="#94A3B8">• Rejects prohibited commands (rm -rf /, etc.)</text>
+      <text x="18" y="114" font-size="11" fill="#94A3B8">• Flags high-risk actions for user authorization</text>
+      <text x="18" y="136" font-size="11" fill="#94A3B8">• Emits SafetyDecision data contract</text>
+    </g>
+
+    <!-- Confirmation Loop -->
+    <g transform="translate(732, 55)">
+      <rect width="340" height="155" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">User Authorization Gate</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#EF4444">Interactive Security Confirmation</text>
+      <text x="18" y="74" font-size="11" fill="#94A3B8">• Halts execution for all HIGH-risk actions</text>
+      <text x="18" y="94" font-size="11" fill="#94A3B8">• Displays action details &amp; password prompt</text>
+      <text x="18" y="114" font-size="11" fill="#94A3B8">• Requires explicit user approval ('yes'/button)</text>
+      <text x="18" y="136" font-size="11" fill="#94A3B8">• Clean cancellation path without residue</text>
+    </g>
+
+    <!-- Audit Logger -->
+    <g transform="translate(1096, 55)">
+      <rect width="320" height="155" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">Security Audit Logger</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#10B981">Append-Only Audit Trail</text>
+      <text x="18" y="74" font-size="11" fill="#94A3B8">• Records timestamps, prompts, decisions</text>
+      <text x="18" y="94" font-size="11" fill="#94A3B8">• Logs tool calls, exit codes, and outcomes</text>
+      <text x="18" y="114" font-size="11" fill="#94A3B8">• Secret masking: passwords never logged</text>
+      <text x="18" y="136" font-size="11" fill="#94A3B8">• Inspectable in GUI &amp; audit log file</text>
+    </g>
+  </g>
+
+  <!-- Connectors Layer 4 -> Layer 5 -->
+  <line x1="800" y1="1160" x2="800" y2="1195" stroke="#10B981" stroke-width="2.5" marker-end="url(#arrowGreen)"/>
+  <rect x="670" y="1166" width="260" height="22" rx="6" fill="#1A233A" stroke="#374872" stroke-width="1"/>
+  <text x="682" y="1181" font-size="10.5" font-weight="700" fill="#A7F3D0">Validated &amp; Approved ToolCalls</text>
+
+  <!-- ==================== LAYER 5: TOOL ROUTING & ORCHESTRATION ENGINE ==================== -->
+  <g transform="translate(80, 1200)">
+    <rect width="1440" height="260" rx="16" fill="url(#cardGrad)" stroke="#1F2A44" stroke-width="1.5" filter="url(#dropShadow)"/>
+    <path d="M 0 16 Q 0 0 16 0 L 1424 0 Q 1440 0 1440 16 L 1440 40 L 0 40 Z" fill="#172138"/>
+    <text x="24" y="26" font-size="13" font-weight="800" fill="#10B981" letter-spacing="1">LAYER 5: TOOL ROUTING &amp; ORCHESTRATION ENGINE</text>
+
+    <!-- Tool Router -->
+    <g transform="translate(24, 55)">
+      <rect width="260" height="185" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">Tool Router</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#38BDF8">Schema Validation</text>
+      <text x="18" y="74" font-size="11" fill="#94A3B8">• Tool registration map</text>
+      <text x="18" y="94" font-size="11" fill="#94A3B8">• Argument type coercion</text>
+      <text x="18" y="114" font-size="11" fill="#94A3B8">• Timeout enforcement</text>
+      <text x="18" y="134" font-size="11" fill="#94A3B8">• Resource profile check</text>
+      <text x="18" y="154" font-size="11" fill="#94A3B8">• Dispatches to executors</text>
+    </g>
+
+    <!-- Tool: VM Manager -->
+    <g transform="translate(304, 55)">
+      <rect width="265" height="185" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">VM Manager</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#6366F1">Hypervisor Automation</text>
+      <text x="18" y="74" font-size="11" fill="#94A3B8">• KVM / QEMU / VBox detect</text>
+      <text x="18" y="94" font-size="11" fill="#94A3B8">• Automated ISO verification</text>
+      <text x="18" y="114" font-size="11" fill="#94A3B8">• Unattended cloud-init setup</text>
+      <text x="18" y="134" font-size="11" fill="#94A3B8">• Arch &amp; Ubuntu VM deploy</text>
+      <text x="18" y="154" font-size="11" fill="#94A3B8">• SSH key &amp; network bridging</text>
+    </g>
+
+    <!-- Tool: Model Manager -->
+    <g transform="translate(589, 55)">
+      <rect width="265" height="185" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">ManageModelsTool</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#F59E0B">Local Model Operations</text>
+      <text x="18" y="74" font-size="11" fill="#94A3B8">• Pull / delete / list models</text>
+      <text x="18" y="94" font-size="11" fill="#94A3B8">• Presets vs custom tags</text>
+      <text x="18" y="114" font-size="11" fill="#94A3B8">• Progress streaming hook</text>
+      <text x="18" y="134" font-size="11" fill="#94A3B8">• Active model switching</text>
+      <text x="18" y="154" font-size="11" fill="#94A3B8">• Local storage inspection</text>
+    </g>
+
+    <!-- Tool: Scaffold & Diagnostics -->
+    <g transform="translate(874, 55)">
+      <rect width="265" height="185" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">Scaffold &amp; Diagnostics</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#10B981">Workspace &amp; Health</text>
+      <text x="18" y="74" font-size="11" fill="#94A3B8">• ProjectScaffold (FastAPI/Go)</text>
+      <text x="18" y="94" font-size="11" fill="#94A3B8">• SystemDiagnosticsTool</text>
+      <text x="18" y="114" font-size="11" fill="#94A3B8">• Disk, memory, load telemetry</text>
+      <text x="18" y="134" font-size="11" fill="#94A3B8">• Test suite execution runner</text>
+      <text x="18" y="154" font-size="11" fill="#94A3B8">• Workspace isolation checks</text>
+    </g>
+
+    <!-- Executor Engine -->
+    <g transform="translate(1159, 55)">
+      <rect width="255" height="185" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">Execution Engine</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#38BDF8">executor.py Subprocess</text>
+      <text x="18" y="74" font-size="11" fill="#94A3B8">• Bounded subprocess exec</text>
+      <text x="18" y="94" font-size="11" fill="#94A3B8">• Non-zero exit code capture</text>
+      <text x="18" y="114" font-size="11" fill="#94A3B8">• Sandboxed working dir</text>
+      <text x="18" y="134" font-size="11" fill="#94A3B8">• GUI automation fallback</text>
+      <text x="18" y="154" font-size="11" fill="#94A3B8">• Emits ExecutionResult</text>
+    </g>
+  </g>
+
+  <!-- Connectors Layer 5 -> Layer 6 -->
+  <line x1="800" y1="1460" x2="800" y2="1495" stroke="#38BDF8" stroke-width="2.5" marker-end="url(#arrowCyan)"/>
+  <rect x="680" y="1466" width="240" height="22" rx="6" fill="#1A233A" stroke="#374872" stroke-width="1"/>
+  <text x="692" y="1481" font-size="10.5" font-weight="700" fill="#BAE6FD">Subsystem Invocations &amp; Telemetry</text>
+
+  <!-- ==================== LAYER 6: OFFLINE SUBSYSTEMS & PERSISTENCE ==================== -->
+  <g transform="translate(80, 1500)">
+    <rect width="1440" height="260" rx="16" fill="url(#cardGrad)" stroke="#1F2A44" stroke-width="1.5" filter="url(#dropShadow)"/>
+    <path d="M 0 16 Q 0 0 16 0 L 1424 0 Q 1440 0 1440 16 L 1440 40 L 0 40 Z" fill="#172138"/>
+    <text x="24" y="26" font-size="13" font-weight="800" fill="#38BDF8" letter-spacing="1">LAYER 6: OFFLINE SUBSYSTEMS, RESOURCE GOVERNOR &amp; PERSISTENCE</text>
+
+    <!-- Offline Model Manager -->
+    <g transform="translate(24, 55)">
+      <rect width="330" height="185" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">Offline Model Manager</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#6366F1">model_manager.py</text>
+      <text x="18" y="74" font-size="11" fill="#94A3B8">• Ollama endpoint discovery (WSL/host)</text>
+      <text x="18" y="94" font-size="11" fill="#94A3B8">• Streaming pull with milestones (25/50/75%)</text>
+      <text x="18" y="114" font-size="11" fill="#94A3B8">• Local model inventory &amp; size inspection</text>
+      <text x="18" y="134" font-size="11" fill="#94A3B8">• Auto-persistence across app reinstalls</text>
+      <text x="18" y="154" font-size="11" fill="#94A3B8">• Disk storage: ~/.ollama/models</text>
+    </g>
+
+    <!-- Resource Governor -->
+    <g transform="translate(378, 55)">
+      <rect width="330" height="185" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">Resource Governor</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#10B981">governor.py (Independent of LLM)</text>
+      <text x="18" y="74" font-size="11" fill="#94A3B8">• Collects 1m/5m/15m CPU load telemetry</text>
+      <text x="18" y="94" font-size="11" fill="#94A3B8">• Monitors free memory &amp; swap pressure</text>
+      <text x="18" y="114" font-size="11" fill="#94A3B8">• Evaluates is_safe_to_execute() gate</text>
+      <text x="18" y="134" font-size="11" fill="#94A3B8">• Graceful fallback without eBPF</text>
+      <text x="18" y="154" font-size="11" fill="#94A3B8">• Prevents workstation resource lockup</text>
+    </g>
+
+    <!-- Natural Voice Engine -->
+    <g transform="translate(732, 55)">
+      <rect width="340" height="185" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">Offline Voice Engine</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#F59E0B">voice_engine.py</text>
+      <text x="18" y="74" font-size="11" fill="#94A3B8">• Microsoft Neural Edge-TTS (Primary)</text>
+      <text x="18" y="94" font-size="11" fill="#94A3B8">• Windows SAPI / .NET Speech (Natural)</text>
+      <text x="18" y="114" font-size="11" fill="#94A3B8">• espeak-ng / spd-say (Offline Linux)</text>
+      <text x="18" y="134" font-size="11" fill="#94A3B8">• 256-entry in-memory LRU audio cache</text>
+      <text x="18" y="154" font-size="11" fill="#94A3B8">• Native audio players: ffplay, mpv, SAPI</text>
+    </g>
+
+    <!-- Vector DB & Memory -->
+    <g transform="translate(1096, 55)">
+      <rect width="320" height="185" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">Vector Memory &amp; Storage</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#38BDF8">vector_db.py</text>
+      <text x="18" y="74" font-size="11" fill="#94A3B8">• SemanticEmbedder: 256-d dense vector</text>
+      <text x="18" y="94" font-size="11" fill="#94A3B8">• Zero-dependency offline tokenization</text>
+      <text x="18" y="114" font-size="11" fill="#94A3B8">• SQLite blob vector store + metadata</text>
+      <text x="18" y="134" font-size="11" fill="#94A3B8">• Cosine similarity search for local RAG</text>
+      <text x="18" y="154" font-size="11" fill="#94A3B8">• Fast retrieval for project contexts</text>
+    </g>
+  </g>
+
+  <!-- Connectors Layer 6 -> Layer 7 -->
+  <line x1="800" y1="1760" x2="800" y2="1795" stroke="#6366F1" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <rect x="690" y="1766" width="220" height="22" rx="6" fill="#1A233A" stroke="#374872" stroke-width="1"/>
+  <text x="702" y="1781" font-size="10.5" font-weight="700" fill="#C7D2FE">Kernel / System Interfaces</text>
+
+  <!-- ==================== LAYER 7: OS, KERNEL & HYPERVISOR BOUNDARY ==================== -->
+  <g transform="translate(80, 1800)">
+    <rect width="1440" height="250" rx="16" fill="url(#cardGrad)" stroke="#1F2A44" stroke-width="1.5" filter="url(#dropShadow)"/>
+    <path d="M 0 16 Q 0 0 16 0 L 1424 0 Q 1440 0 1440 16 L 1440 40 L 0 40 Z" fill="#172138"/>
+    <text x="24" y="26" font-size="13" font-weight="800" fill="#8B5CF6" letter-spacing="1">LAYER 7: OPERATING SYSTEM, KERNEL &amp; HYPERVISOR BOUNDARY</text>
+
+    <!-- OS Runtimes -->
+    <g transform="translate(24, 55)">
+      <rect width="440" height="175" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">Operating System Runtimes</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#38BDF8">Linux Desktop / WSL2 / Windows</text>
+      <text x="18" y="74" font-size="11" fill="#94A3B8">• Debian / Ubuntu package distribution (marrowai.deb)</text>
+      <text x="18" y="94" font-size="11" fill="#94A3B8">• WSL2 Linux environment with Windows host interop</text>
+      <text x="18" y="114" font-size="11" fill="#94A3B8">• Arch Linux target execution runtime</text>
+      <text x="18" y="134" font-size="11" fill="#94A3B8">• Multi-shell support: bash, sh, PowerShell</text>
+      <text x="18" y="154" font-size="11" fill="#94A3B8">• Systemd service auto-enablement for Ollama</text>
+    </g>
+
+    <!-- Kernel & Proc -->
+    <g transform="translate(488, 55)">
+      <rect width="460" height="175" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">Kernel Boundaries &amp; Procfs</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#10B981">Kernel-Adjacent Telemetry Hooks</text>
+      <text x="18" y="74" font-size="11" fill="#94A3B8">• /proc/loadavg &amp; /proc/meminfo telemetry reads</text>
+      <text x="18" y="94" font-size="11" fill="#94A3B8">• /proc/net/route default gateway host discovery</text>
+      <text x="18" y="114" font-size="11" fill="#94A3B8">• cgroups v2 resource quotas &amp; process isolation</text>
+      <text x="18" y="134" font-size="11" fill="#94A3B8">• eBPF-based monitoring hooks (where supported)</text>
+      <text x="18" y="154" font-size="11" fill="#94A3B8">• Strict privilege separation: app stays in userspace</text>
+    </g>
+
+    <!-- Virtualization -->
+    <g transform="translate(972, 55)">
+      <rect width="440" height="175" rx="12" fill="#0D1322" stroke="#253556" stroke-width="1.2"/>
+      <text x="18" y="28" font-size="15" font-weight="700" fill="#FFFFFF">Hardware Virtualization &amp; Isolated VMs</text>
+      <text x="18" y="48" font-size="11" font-weight="600" fill="#F59E0B">QEMU / KVM / VirtualBox</text>
+      <text x="18" y="74" font-size="11" fill="#94A3B8">• /dev/kvm hardware virtualization acceleration</text>
+      <text x="18" y="94" font-size="11" fill="#94A3B8">• QEMU system emulator with headless VNC/SPICE</text>
+      <text x="18" y="114" font-size="11" fill="#94A3B8">• VirtualBox headless automation (VBoxManage)</text>
+      <text x="18" y="134" font-size="11" fill="#94A3B8">• Cloud-init automated cloud-config provisioning</text>
+      <text x="18" y="154" font-size="11" fill="#94A3B8">• Isolated sandboxes for high-risk software tests</text>
+    </g>
+  </g>
+
+  <!-- Footer -->
+  <text x="800" y="2110" font-size="12" font-weight="600" fill="#64748B" text-anchor="middle">MarrowAI System Architecture Design (HLD) • Generated for Project Documentation • Strictly Confidential &amp; Verified</text>
+</svg>

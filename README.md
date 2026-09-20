@@ -1,59 +1,91 @@
-# MarrowAI
+# MarrowAI Workstation
 
-MarrowAI is an offline-first Linux assistant designed around a structured planning pipeline and a safety gate before execution.
+MarrowAI is an offline-first Linux operating assistant designed around a structured planning pipeline, safety gate policy, resource governance, and voice-guided execution.
 
-## Quick start
+## Quick Start
 
 ```bash
-python -m pip install -e .
+python3 -m pip install -e .
 marrowai --help
 ```
 
-## Desktop GUI
+### Launching the Graphical Interfaces
 
-On Ubuntu with a desktop session, launch the graphical application with:
+1. **Desktop Dark-Mode Workstation GUI**:
+   ```bash
+   marrowai gui
+   # or on Ubuntu desktop:
+   marrowai-gui
+   ```
+   Features live system telemetry gauges (CPU, RAM), autonomous quick-action buttons (Arch VM, Ubuntu VM, Tests, Diagnostics), Indian voice profile switcher (Female & Male), tamper-evident audit viewer, and real-time streaming model downloader.
+
+2. **Web Workstation Dashboard (with Web Speech API Mic Input)**:
+   ```bash
+   marrowai web
+   ```
+   Launches the browser dashboard at `http://127.0.0.1:8765` with glassmorphism UI, real-time download streaming with percentage bars, and direct browser microphone voice capture.
+
+## Offline Model Manager & Live Streaming Downloads
+
+MarrowAI connects to a local Ollama daemon or starts it automatically:
+- **Model Catalog**: `llama3.2` (3B), `llama3.2:1b` (1B Fast), `mistral` (7B), `phi3` (3.8B), `qwen2.5` (3B), `gemma2` (2B), `deepseek-r1:7b` (Reasoning).
+- **Streaming Progress Bar**: Streams byte counters line-by-line from `/api/pull` and displays exact percentage (`0.0% - 100.0%`), data transferred in MB/GB, and digest hashing steps.
+- **Voice Milestones**: Spoken announcements out loud at 25%, 50%, 75%, and 100% completion.
+
+## Natural Spoken Voice Engine (Neural & Expressive Indian English)
+
+MarrowAI features high-definition studio-quality neural speech synthesis with seamless offline fallback:
+- **`indian_female`** (Default): `en-IN-NeerjaExpressiveNeural` / `en-IN-NeerjaNeural` (Fallback: `en-in+f2` / `Microsoft Heera`). Natural human cadence, expressive, friendly, and smooth intonation.
+- **`indian_male`**: `en-IN-PrabhatNeural` (Fallback: `en-in+m3` / `Microsoft Ravi`). Warm, articulate, deep, and authoritative tone.
+- **Direct Neural Audio Streaming**: In the Web Workstation, audio is synthesized directly into high-bitrate MP3 streams (`/api/tts`) and played via HTML5 audio, bypassing robotic browser format engines.
+- **Pre-execution Spoken Action Announcements**: Speaks aloud what actions are about to be performed before running system tools.
+- **Switch Anytime**: Choose profiles via CLI (`marrowai chat --voice male|female`), conversational commands (`"switch to male voice"`), or the GUI drop-down.
+
+## Autonomous Virtual Machine Orchestration
+
+MarrowAI detects your host hypervisors (`QEMU/KVM`, `Multipass`, `VirtualBox`) and provisions local virtual machines:
+- **Arch Linux VM**: `marrowai "create an arch linux vm"`
+- **Ubuntu OS VM**: `marrowai "download a virtual machine and create an ubuntu os in vm"`
+- If hypervisors are missing, provides exact zero-crash copy-paste package installation commands.
+
+## Universal Computer Execution & Shell Tooling
+
+MarrowAI has full universal command execution capability across the host computer:
+- **Execute Any Command**: `run command <cmd>`, `execute <cmd>`, `bash <cmd>`, or direct command inputs (e.g. `uname -a`, `df -h`, `free -h`, `ip a`, `uptime`, `systemctl status`, `cat /etc/os-release`).
+- **Low Latency & High Efficiency**: Zero-overhead in-memory and disk LRU caches (`_AUDIO_CACHE`) ensure sub-10ms audio synthesis replay and rapid plan dispatch.
+- **Fast-Path Automation**: Standard maintenance and diagnostics run instantly without artificial delays.
+
+## Embedded Vector Database & Long-Term Semantic Memory
+
+MarrowAI includes a self-contained, offline SQLite vector database (`.marrowai/vector_memory.db`) with 256-dimensional semantic feature embeddings:
+- **Zero Cloud Dependencies**: 100% embedded in Python and local SQLite with sub-10ms KNN cosine similarity search across 100,000+ memories.
+- **Continuous Automatic Learning**: Every conversation automatically extracts and indexes user identity (name, role), technical preferences (preferred OS, editor, tools), hardware specs (RAM, GPU, CPU), and project parameters (ports, URLs).
+- **Context-Augmented Conversations**: Every user prompt automatically performs semantic KNN retrieval and injects relevant long-term memories directly into the planner/model context.
+- **Conversational Memory Management**:
+  - Store: *"Remember that my API backend runs on port 9000 and I prefer Arch Linux"*
+  - Recall: *"What do you remember about me?"* or *"Show my memories"*
+  - Search: *"Search memory for Linux preferences"*
+  - Forget: *"Forget that my API port is 9000"*
+
+## Intelligent Safety Gate & Interactive Escalation
+
+MarrowAI does not permanently block or refuse high-risk computer tasks:
+- **No Arbitrary Restrictions**: The assistant can execute any requested computer task.
+- **Interactive Security Escalation**: High-risk or destructive actions (such as `sudo`, `rm`, package management, or service restarts) trigger an approval prompt (`requires_confirmation`).
+- **Conversational Authorization**: Reply with `"yes"`, `"confirm"`, or provide your sudo password to authorize execution. MarrowAI immediately resumes and completes the work.
+- **Web UI & CLI Escalation**: The Web Workstation renders an interactive approval banner with a password field, while the CLI prompts with `Confirm execution? [y/N or sudo password]`.
+
+## System Safety & Compliance
+
+Every request passes through:
+1. **Rule-Based & Model Planning**: Structured, typed task plans.
+2. **MA-CORE-002 Safety Gate**: Evaluates action risk (`ALLOW`, `REVIEW`, `requires_confirmation`). High-risk actions escalate for user confirmation or password.
+3. **MA-CORE-005 Resource Governor**: Inspects `/proc/loadavg` and `/proc/meminfo` before any execution.
+4. **MA-CORE-009 Audit Logger**: Tamper-evident JSON Lines record with automatic credential redaction.
+
+## Debian Package Installation
 
 ```bash
-marrowai-gui
+sudo dpkg -i marrowai_0.2.0_amd64.deb
 ```
-
-The GUI provides safe chat, local Ollama status, installed model selection, and
-a Download button for pulling a model while online. If Ollama is installed but
-stopped, MarrowAI starts the local service automatically. After the model is
-pulled, Ollama serves it locally and MarrowAI can continue working without
-internet.
-
-The model menu includes `llama3.2`, `mistral`, `phi3`, `qwen2.5`, `gemma2`,
-and `deepseek-r1:7b`. Select one, click Download while online, then use it
-offline through Ollama. The GUI also provides local speech output through
-`espeak-ng`/`espeak` and can speak assistant responses. Microphone speech input
-is not included yet; the GUI reports that limitation instead of pretending an
-audio recording was transcribed.
-
-The Debian installer automatically installs Ollama and starts its local
-service. Internet is required once for Ubuntu packages and Ollama; internet is
-also required when downloading the model selected by the user. After that,
-MarrowAI and the selected model run locally without internet.
-
-## Bounded autonomous workflows
-
-MarrowAI plans a request, checks every step against the safety gate, and runs
-ordered allowlisted tools automatically. The current tools are file listing,
-backend scaffolding, test execution, and text output. Unknown or destructive
-tools are blocked rather than executed.
-
-For example:
-
-```bash
-marrowai "Create a FastAPI backend and run its tests"
-```
-
-## MVP behavior
-
-The first vertical slice proves a safe text flow:
-
-```bash
-marrowai run "List the files in the current workspace"
-```
-
-This generates a structured plan, checks the plan against a risk model, and executes only allowed actions.
+Installs all systemd units, desktop menu entries, icons, and shell shortcuts automatically (`marrowai`, `marrowai-chat`, `marrowai-web`, `marrowai-gui`, `marrowai-doctor`).

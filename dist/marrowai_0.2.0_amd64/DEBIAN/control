@@ -1,0 +1,8 @@
+Package: marrowai
+Version: 0.2.0
+Section: utils
+Priority: optional
+Architecture: amd64
+Depends: python3, python3-tk, ffmpeg, espeak-ng, git, curl
+Maintainer: MarrowAI Team <team@marrowai.local>
+Description: Offline-first local assistant with safe planning, voice, and scaffolding
