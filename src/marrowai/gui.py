@@ -24,23 +24,23 @@ MODEL_CATALOG = [
     "deepseek-r1:7b",
 ]
 
-# Modern Dark Obsidian Theme Tokens
+# Refined Premium Dark Theme Tokens
 THEME = {
-    "bg_dark": "#0B0F19",
-    "surface": "#111827",
-    "surface_alt": "#1F2937",
-    "surface_elevated": "#283548",
-    "border": "#374151",
-    "border_highlight": "#4B5563",
-    "text_primary": "#F9FAFB",
-    "text_secondary": "#9CA3AF",
-    "text_muted": "#6B7280",
-    "accent_blue": "#2563EB",
-    "accent_cyan": "#06B6D4",
-    "accent_purple": "#7C3AED",
-    "status_green": "#10B981",
-    "status_amber": "#F59E0B",
-    "status_red": "#EF4444",
+    "bg_dark": "#0D1117",         # GitHub Dark background
+    "surface": "#161B22",         # GitHub Dark surface
+    "surface_alt": "#21262D",     # Elevated surface
+    "surface_elevated": "#30363D",
+    "border": "#30363D",
+    "border_highlight": "#8B949E",
+    "text_primary": "#E6EDF3",
+    "text_secondary": "#7D8590",
+    "text_muted": "#6E7681",
+    "accent_blue": "#2F81F7",
+    "accent_cyan": "#39D353",
+    "accent_purple": "#A371F7",
+    "status_green": "#238636",
+    "status_amber": "#D29922",
+    "status_red": "#F85149",
 }
 
 
@@ -49,7 +49,7 @@ class MarrowAIWindow:
 
     def __init__(self, root: tk.Tk | None = None) -> None:
         self.root = root or tk.Tk()
-        self.root.title("MarrowAI Workstation — Autonomous Linux Operating Assistant")
+        self.root.title("MarrowAI Workstation - Autonomous Linux Operating Assistant")
         self.root.geometry("1120x760")
         self.root.minsize(920, 620)
         self.root.configure(bg=THEME["bg_dark"])
@@ -103,38 +103,38 @@ class MarrowAIWindow:
             "TLabelframe.Label",
             background=THEME["surface"],
             foreground=THEME["accent_cyan"],
-            font=("Segoe UI", 10, "bold"),
+            font=("sans-serif", 10, "bold"),
         )
 
         style.configure(
             "TLabel",
             background=THEME["surface"],
             foreground=THEME["text_primary"],
-            font=("Segoe UI", 9),
+            font=("sans-serif", 9),
         )
         style.configure(
             "Header.TLabel",
             background=THEME["bg_dark"],
             foreground=THEME["text_primary"],
-            font=("Segoe UI", 16, "bold"),
+            font=("sans-serif", 16, "bold"),
         )
         style.configure(
             "SubHeader.TLabel",
             background=THEME["bg_dark"],
             foreground=THEME["text_secondary"],
-            font=("Segoe UI", 9),
+            font=("sans-serif", 9),
         )
         style.configure(
             "Metric.TLabel",
             background=THEME["surface_alt"],
             foreground=THEME["text_primary"],
-            font=("Segoe UI", 11, "bold"),
+            font=("sans-serif", 11, "bold"),
         )
         style.configure(
             "MetricTitle.TLabel",
             background=THEME["surface_alt"],
             foreground=THEME["text_secondary"],
-            font=("Segoe UI", 8),
+            font=("sans-serif", 8),
         )
 
         # Buttons
@@ -142,17 +142,17 @@ class MarrowAIWindow:
             "Primary.TButton",
             background=THEME["accent_blue"],
             foreground="#FFFFFF",
-            font=("Segoe UI", 9, "bold"),
+            font=("sans-serif", 9, "bold"),
             borderwidth=0,
             padding=(12, 6),
         )
-        style.map("Primary.TButton", background=[("active", "#1D4ED8")])
+        style.map("Primary.TButton", background=[("active", "#1F6FEB")])
 
         style.configure(
             "Action.TButton",
             background=THEME["surface_alt"],
             foreground=THEME["text_primary"],
-            font=("Segoe UI", 9),
+            font=("sans-serif", 9),
             borderwidth=1,
             bordercolor=THEME["border"],
             padding=(10, 5),
@@ -163,26 +163,26 @@ class MarrowAIWindow:
             "Download.TButton",
             background=THEME["status_green"],
             foreground="#FFFFFF",
-            font=("Segoe UI", 9, "bold"),
+            font=("sans-serif", 9, "bold"),
             borderwidth=0,
             padding=(12, 6),
         )
-        style.map("Download.TButton", background=[("active", "#059669")])
+        style.map("Download.TButton", background=[("active", "#2EA043")])
 
         style.configure(
             "TCheckbutton",
             background=THEME["surface"],
             foreground=THEME["text_primary"],
-            font=("Segoe UI", 9),
+            font=("sans-serif", 9),
         )
 
         # Progress bar
         style.configure(
             "Determinate.Horizontal.TProgressbar",
             troughcolor=THEME["surface_alt"],
-            background=THEME["accent_cyan"],
-            lightcolor=THEME["accent_cyan"],
-            darkcolor=THEME["accent_blue"],
+            background=THEME["status_green"],
+            lightcolor=THEME["status_green"],
+            darkcolor=THEME["status_green"],
             bordercolor=THEME["border"],
             thickness=16,
         )
@@ -200,17 +200,17 @@ class MarrowAIWindow:
         title_box.grid(row=0, column=0, sticky="w")
         tk.Label(
             title_box,
-            text="⚡ MarrowAI Workstation",
+            text="MarrowAI Workstation",
             bg=THEME["bg_dark"],
             fg=THEME["text_primary"],
-            font=("Segoe UI", 16, "bold"),
+            font=("sans-serif", 16, "bold"),
         ).pack(anchor="w")
         tk.Label(
             title_box,
-            text="Autonomous Linux Operating Assistant • Offline-First",
+            text="Autonomous Agent Workspace",
             bg=THEME["bg_dark"],
             fg=THEME["text_secondary"],
-            font=("Segoe UI", 9),
+            font=("sans-serif", 9),
         ).pack(anchor="w")
 
         # Top Status Pills
@@ -222,7 +222,7 @@ class MarrowAIWindow:
             textvariable=self.status_ollama,
             bg=THEME["surface_alt"],
             fg=THEME["status_green"],
-            font=("Segoe UI", 9, "bold"),
+            font=("sans-serif", 9, "bold"),
             padx=10,
             pady=4,
             relief="solid",
@@ -235,7 +235,7 @@ class MarrowAIWindow:
             textvariable=self.status_governor,
             bg=THEME["surface_alt"],
             fg=THEME["accent_cyan"],
-            font=("Segoe UI", 9, "bold"),
+            font=("sans-serif", 9, "bold"),
             padx=10,
             pady=4,
             relief="solid",
@@ -248,7 +248,7 @@ class MarrowAIWindow:
             textvariable=self.status_voice,
             bg=THEME["surface_alt"],
             fg=THEME["accent_purple"],
-            font=("Segoe UI", 9, "bold"),
+            font=("sans-serif", 9, "bold"),
             padx=10,
             pady=4,
             relief="solid",
@@ -268,40 +268,76 @@ class MarrowAIWindow:
         sidebar.grid_propagate(False)
 
         # 1. System Telemetry & Governor Card
-        tk.Label(sidebar, text="📊 SYSTEM TELEMETRY", bg=THEME["surface"], fg=THEME["accent_cyan"], font=("Segoe UI", 9, "bold")).pack(anchor="w", pady=(0, 6))
+        tk.Label(sidebar, text="SYSTEM TELEMETRY", bg=THEME["surface"], fg=THEME["accent_cyan"], font=("sans-serif", 9, "bold")).pack(anchor="w", pady=(0, 6))
         telemetry_box = tk.Frame(sidebar, bg=THEME["surface_alt"], padx=10, pady=8, highlightbackground=THEME["border"], highlightthickness=1)
         telemetry_box.pack(fill="x", pady=(0, 12))
 
-        self.lbl_cpu = tk.Label(telemetry_box, text="CPU: 0.0%", bg=THEME["surface_alt"], fg=THEME["text_primary"], font=("Segoe UI", 9))
+        self.lbl_cpu = tk.Label(telemetry_box, text="CPU: 0.0%", bg=THEME["surface_alt"], fg=THEME["text_primary"], font=("sans-serif", 9))
         self.lbl_cpu.pack(anchor="w")
-        self.lbl_mem = tk.Label(telemetry_box, text="Free RAM: Checking...", bg=THEME["surface_alt"], fg=THEME["text_primary"], font=("Segoe UI", 9))
+        self.lbl_mem = tk.Label(telemetry_box, text="Free RAM: Checking...", bg=THEME["surface_alt"], fg=THEME["text_primary"], font=("sans-serif", 9))
         self.lbl_mem.pack(anchor="w")
-        self.lbl_hyp = tk.Label(telemetry_box, text="Hypervisors: Detecting...", bg=THEME["surface_alt"], fg=THEME["text_secondary"], font=("Segoe UI", 8))
+        self.lbl_hyp = tk.Label(telemetry_box, text="Hypervisors: Detecting...", bg=THEME["surface_alt"], fg=THEME["text_secondary"], font=("sans-serif", 8))
         self.lbl_hyp.pack(anchor="w", pady=(2, 0))
 
         # 2. Autonomous Quick Actions
-        tk.Label(sidebar, text="⚡ QUICK WORKFLOWS", bg=THEME["surface"], fg=THEME["accent_cyan"], font=("Segoe UI", 9, "bold")).pack(anchor="w", pady=(6, 6))
+        tk.Label(sidebar, text="QUICK WORKFLOWS", bg=THEME["surface"], fg=THEME["accent_cyan"], font=("sans-serif", 9, "bold")).pack(anchor="w", pady=(6, 6))
 
         actions_frame = tk.Frame(sidebar, bg=THEME["surface"])
         actions_frame.pack(fill="x", pady=(0, 12))
 
-        btn_arch = tk.Button(actions_frame, text="🚀 Create Arch Linux VM", bg=THEME["surface_alt"], fg=THEME["text_primary"], relief="flat", padx=8, pady=5, font=("Segoe UI", 9), anchor="w", command=lambda: self._quick_action("create an arch linux vm"))
+        btn_arch = tk.Button(actions_frame, text="Create Arch Linux VM", bg=THEME["surface_alt"], fg=THEME["text_primary"], relief="flat", padx=8, pady=5, font=("sans-serif", 9), anchor="w", command=lambda: self._quick_action("create an arch linux vm"))
         btn_arch.pack(fill="x", pady=2)
 
-        btn_ubuntu = tk.Button(actions_frame, text="🐧 Create Ubuntu VM", bg=THEME["surface_alt"], fg=THEME["text_primary"], relief="flat", padx=8, pady=5, font=("Segoe UI", 9), anchor="w", command=lambda: self._quick_action("download a virtual machine and create an ubuntu os in vm"))
+        btn_ubuntu = tk.Button(actions_frame, text="Create Ubuntu VM", bg=THEME["surface_alt"], fg=THEME["text_primary"], relief="flat", padx=8, pady=5, font=("sans-serif", 9), anchor="w", command=lambda: self._quick_action("download a virtual machine and create an ubuntu os in vm"))
         btn_ubuntu.pack(fill="x", pady=2)
 
-        btn_status = tk.Button(actions_frame, text="🔍 Full Telemetry & Health", bg=THEME["surface_alt"], fg=THEME["text_primary"], relief="flat", padx=8, pady=5, font=("Segoe UI", 9), anchor="w", command=lambda: self._quick_action("what is the system status and health?"))
+        btn_status = tk.Button(actions_frame, text="Full Telemetry & Health", bg=THEME["surface_alt"], fg=THEME["text_primary"], relief="flat", padx=8, pady=5, font=("sans-serif", 9), anchor="w", command=lambda: self._quick_action("what is the system status and health?"))
         btn_status.pack(fill="x", pady=2)
 
-        btn_tests = tk.Button(actions_frame, text="🧪 Run Local Test Suite", bg=THEME["surface_alt"], fg=THEME["text_primary"], relief="flat", padx=8, pady=5, font=("Segoe UI", 9), anchor="w", command=lambda: self._quick_action("test the project code"))
+        btn_tests = tk.Button(actions_frame, text="Run Local Test Suite", bg=THEME["surface_alt"], fg=THEME["text_primary"], relief="flat", padx=8, pady=5, font=("sans-serif", 9), anchor="w", command=lambda: self._quick_action("test the project code"))
         btn_tests.pack(fill="x", pady=2)
 
-        btn_audit = tk.Button(actions_frame, text="📋 View Security Audit Log", bg=THEME["surface_alt"], fg=THEME["text_primary"], relief="flat", padx=8, pady=5, font=("Segoe UI", 9), anchor="w", command=self._show_audit_modal)
+        btn_audit = tk.Button(actions_frame, text="View Security Audit Log", bg=THEME["surface_alt"], fg=THEME["text_primary"], relief="flat", padx=8, pady=5, font=("sans-serif", 9), anchor="w", command=self._show_audit_modal)
         btn_audit.pack(fill="x", pady=2)
 
+        # 2.5. Daily Context & Session History Card
+        tk.Label(sidebar, text="DAILY CONTEXT SESSIONS", bg=THEME["surface"], fg=THEME["accent_cyan"], font=("sans-serif", 9, "bold")).pack(anchor="w", pady=(6, 6))
+        session_box = tk.Frame(sidebar, bg=THEME["surface_alt"], padx=10, pady=8, highlightbackground=THEME["border"], highlightthickness=1)
+        session_box.pack(fill="x", pady=(0, 10))
+
+        self.lbl_session_turns = tk.Label(session_box, text="Today: 0 turns recorded", bg=THEME["surface_alt"], fg=THEME["text_primary"], font=("sans-serif", 9))
+        self.lbl_session_turns.pack(anchor="w", pady=(0, 6))
+
+        btn_today_session = tk.Button(
+            session_box,
+            text="Review Today's Session",
+            bg=THEME["surface"],
+            fg=THEME["accent_cyan"],
+            relief="flat",
+            padx=8,
+            pady=4,
+            font=("sans-serif", 9, "bold"),
+            anchor="w",
+            command=self._review_today_session,
+        )
+        btn_today_session.pack(fill="x", pady=2)
+
+        btn_browse_sessions = tk.Button(
+            session_box,
+            text="Browse Daily Sessions",
+            bg=THEME["surface"],
+            fg=THEME["accent_purple"],
+            relief="flat",
+            padx=8,
+            pady=4,
+            font=("sans-serif", 9, "bold"),
+            anchor="w",
+            command=self._browse_daily_sessions_modal,
+        )
+        btn_browse_sessions.pack(fill="x", pady=2)
+
         # 3. Voice & Speech Settings
-        tk.Label(sidebar, text="🎙️ VOICE PROFILE", bg=THEME["surface"], fg=THEME["accent_cyan"], font=("Segoe UI", 9, "bold")).pack(anchor="w", pady=(6, 6))
+        tk.Label(sidebar, text="VOICE PROFILE", bg=THEME["surface"], fg=THEME["accent_cyan"], font=("sans-serif", 9, "bold")).pack(anchor="w", pady=(6, 6))
         voice_box = tk.Frame(sidebar, bg=THEME["surface_alt"], padx=10, pady=8, highlightbackground=THEME["border"], highlightthickness=1)
         voice_box.pack(fill="x", pady=(0, 6))
 
@@ -310,10 +346,10 @@ class MarrowAIWindow:
         self.voice_combo.pack(fill="x", pady=(0, 6))
         self.voice_combo.bind("<<ComboboxSelected>>", lambda _e: self._on_voice_changed())
 
-        chk_speak = tk.Checkbutton(voice_box, text="Speak responses", variable=self.speak_responses, bg=THEME["surface_alt"], fg=THEME["text_primary"], selectcolor=THEME["surface"], activebackground=THEME["surface_alt"], activeforeground=THEME["text_primary"], font=("Segoe UI", 9))
+        chk_speak = tk.Checkbutton(voice_box, text="Speak responses", variable=self.speak_responses, bg=THEME["surface_alt"], fg=THEME["text_primary"], selectcolor=THEME["surface"], activebackground=THEME["surface_alt"], activeforeground=THEME["text_primary"], font=("sans-serif", 9))
         chk_speak.pack(anchor="w")
 
-        btn_test_voice = tk.Button(voice_box, text="🔊 Test Voice Output", bg=THEME["surface"], fg=THEME["accent_purple"], relief="flat", padx=8, pady=4, font=("Segoe UI", 9, "bold"), command=self._test_voice)
+        btn_test_voice = tk.Button(voice_box, text="Test Voice Output", bg=THEME["surface"], fg=THEME["accent_purple"], relief="flat", padx=8, pady=4, font=("sans-serif", 9, "bold"), command=self._test_voice)
         btn_test_voice.pack(fill="x", pady=(6, 0))
 
         # RIGHT MAIN WORKSPACE (Chat + Model Management Hub)
@@ -337,9 +373,9 @@ class MarrowAIWindow:
             fg=THEME["text_primary"],
             insertbackground=THEME["accent_cyan"],
             relief="flat",
-            font=("Segoe UI", 10),
-            padx=12,
-            pady=10,
+            font=("sans-serif", 10),
+            padx=16,
+            pady=16,
         )
         self.output.grid(row=0, column=0, sticky="nsew")
         scrollbar = ttk.Scrollbar(chat_card, orient="vertical", command=self.output.yview)
@@ -347,11 +383,12 @@ class MarrowAIWindow:
         self.output.configure(yscrollcommand=scrollbar.set)
 
         # Tag configurations for chat messages
-        self.output.tag_configure("user", foreground=THEME["accent_cyan"], font=("Segoe UI", 10, "bold"))
-        self.output.tag_configure("narration", foreground=THEME["status_amber"], font=("Segoe UI", 9, "italic"))
-        self.output.tag_configure("marrow", foreground=THEME["text_primary"], font=("Segoe UI", 10))
-        self.output.tag_configure("success", foreground=THEME["status_green"], font=("Segoe UI", 10, "bold"))
-        self.output.tag_configure("blocked", foreground=THEME["status_red"], font=("Segoe UI", 10, "bold"))
+        self.output.tag_configure("user", foreground=THEME["accent_cyan"], font=("sans-serif", 10, "bold"))
+        self.output.tag_configure("narration", foreground=THEME["status_amber"], font=("sans-serif", 9, "italic"))
+        self.output.tag_configure("thinking_box", foreground="#A371F7", font=("sans-serif", 9))
+        self.output.tag_configure("marrow", foreground=THEME["text_primary"], font=("sans-serif", 10))
+        self.output.tag_configure("success", foreground=THEME["status_green"], font=("sans-serif", 10, "bold"))
+        self.output.tag_configure("blocked", foreground=THEME["status_red"], font=("sans-serif", 10, "bold"))
 
         # Prompt Entry Row
         prompt_box = tk.Frame(chat_card, bg=THEME["surface"], pady=10)
@@ -364,7 +401,7 @@ class MarrowAIWindow:
             fg=THEME["text_primary"],
             insertbackground=THEME["accent_cyan"],
             relief="flat",
-            font=("Segoe UI", 11),
+            font=("sans-serif", 11),
             highlightbackground=THEME["border"],
             highlightthickness=1,
         )
@@ -376,7 +413,7 @@ class MarrowAIWindow:
             text="Send Request",
             bg=THEME["accent_blue"],
             fg="#FFFFFF",
-            font=("Segoe UI", 9, "bold"),
+            font=("sans-serif", 9, "bold"),
             relief="flat",
             padx=14,
             pady=6,
@@ -386,10 +423,10 @@ class MarrowAIWindow:
 
         btn_mic = tk.Button(
             prompt_box,
-            text="🎙️ Voice",
+            text="Voice",
             bg=THEME["surface_alt"],
             fg=THEME["text_primary"],
-            font=("Segoe UI", 9),
+            font=("sans-serif", 9),
             relief="flat",
             padx=10,
             pady=6,
@@ -402,7 +439,7 @@ class MarrowAIWindow:
             text="Clear",
             bg=THEME["surface_alt"],
             fg=THEME["text_secondary"],
-            font=("Segoe UI", 9),
+            font=("sans-serif", 9),
             relief="flat",
             padx=10,
             pady=6,
@@ -417,19 +454,19 @@ class MarrowAIWindow:
 
         header_row = tk.Frame(model_card, bg=THEME["surface"])
         header_row.grid(row=0, column=0, columnspan=4, sticky="ew", pady=(0, 8))
-        tk.Label(header_row, text="📦 LOCAL OFFLINE MODEL MANAGER", bg=THEME["surface"], fg=THEME["accent_cyan"], font=("Segoe UI", 9, "bold")).pack(side="left")
-        self.lbl_pct = tk.Label(header_row, textvariable=self.download_pct_str, bg=THEME["surface"], fg=THEME["status_green"], font=("Segoe UI", 12, "bold"))
+        tk.Label(header_row, text="LOCAL OFFLINE MODEL MANAGER", bg=THEME["surface"], fg=THEME["accent_cyan"], font=("sans-serif", 9, "bold")).pack(side="left")
+        self.lbl_pct = tk.Label(header_row, textvariable=self.download_pct_str, bg=THEME["surface"], fg=THEME["status_green"], font=("sans-serif", 12, "bold"))
         self.lbl_pct.pack(side="right")
 
-        tk.Label(model_card, text="Model:", bg=THEME["surface"], fg=THEME["text_secondary"], font=("Segoe UI", 9)).grid(row=1, column=0, sticky="w", padx=(0, 8))
+        tk.Label(model_card, text="Model:", bg=THEME["surface"], fg=THEME["text_secondary"], font=("sans-serif", 9)).grid(row=1, column=0, sticky="w", padx=(0, 8))
 
-        self.model_selector = ttk.Combobox(model_card, textvariable=self.model_name, values=MODEL_CATALOG, state="normal", width=28)
+        self.model_selector = ttk.Combobox(model_card, textvariable=self.model_name, state="normal", width=28)
         self.model_selector.grid(row=1, column=1, sticky="ew", padx=(0, 10))
 
-        btn_refresh = tk.Button(model_card, text="🔄 Refresh", bg=THEME["surface_alt"], fg=THEME["text_primary"], relief="flat", padx=10, pady=4, font=("Segoe UI", 9), command=self._refresh_models)
+        btn_refresh = tk.Button(model_card, text="Refresh", bg=THEME["surface_alt"], fg=THEME["text_primary"], relief="flat", padx=10, pady=4, font=("sans-serif", 9), command=self._refresh_models)
         btn_refresh.grid(row=1, column=2, padx=(0, 6))
 
-        self.btn_download = tk.Button(model_card, text="⬇ Download Model", bg=THEME["status_green"], fg="#FFFFFF", relief="flat", padx=14, pady=4, font=("Segoe UI", 9, "bold"), command=self._download_model)
+        self.btn_download = tk.Button(model_card, text="Download Model", bg=THEME["status_green"], fg="#FFFFFF", relief="flat", padx=14, pady=4, font=("sans-serif", 9, "bold"), command=self._download_model)
         self.btn_download.grid(row=1, column=3)
 
         # Real-time Progress Bar (Determinate)
@@ -439,13 +476,13 @@ class MarrowAIWindow:
         # Progress Detail Row
         prog_detail = tk.Frame(model_card, bg=THEME["surface"])
         prog_detail.grid(row=3, column=0, columnspan=4, sticky="ew")
-        tk.Label(prog_detail, textvariable=self.download_detail_str, bg=THEME["surface"], fg=THEME["text_secondary"], font=("Segoe UI", 8)).pack(side="left")
-        tk.Label(prog_detail, textvariable=self.download_bytes_str, bg=THEME["surface"], fg=THEME["accent_cyan"], font=("Segoe UI", 8, "bold")).pack(side="right")
+        tk.Label(prog_detail, textvariable=self.download_detail_str, bg=THEME["surface"], fg=THEME["text_secondary"], font=("sans-serif", 8)).pack(side="left")
+        tk.Label(prog_detail, textvariable=self.download_bytes_str, bg=THEME["surface"], fg=THEME["accent_cyan"], font=("sans-serif", 8, "bold")).pack(side="right")
 
         welcome_msg = (
-            "MarrowAI Workstation initialized.\n"
-            "I am your offline-first Linux operating assistant with deterministic planning and safety governance.\n"
-            "Select any action from the left sidebar, download an offline AI model, or type your request below."
+            "MarrowAI Workspace initialized.\n"
+            "Autonomous offline agent ready for instructions. Safety limits disabled.\n"
+            "Type your request below to begin."
         )
         self._append(welcome_msg, "marrow")
 
@@ -481,15 +518,18 @@ class MarrowAIWindow:
             detected = mgr.detect_hypervisors()
             hyp_str = f"Hypervisors: {detected['recommended']}"
 
-            self._safe_after(lambda: self._update_telemetry_ui(status_text, cpu_val, mem_val, hyp_str))
+            turns_count = len(self.assistant.memory.get_daily_context().get("turns", []))
+            self._safe_after(lambda: self._update_telemetry_ui(status_text, cpu_val, mem_val, hyp_str, turns_count))
 
         threading.Thread(target=work, daemon=True).start()
 
-    def _update_telemetry_ui(self, gov_status: str, cpu_str: str, mem_str: str, hyp_str: str) -> None:
+    def _update_telemetry_ui(self, gov_status: str, cpu_str: str, mem_str: str, hyp_str: str, turns_count: int = 0) -> None:
         self.status_governor.set(gov_status)
         self.lbl_cpu.configure(text=cpu_str)
         self.lbl_mem.configure(text=mem_str)
         self.lbl_hyp.configure(text=hyp_str)
+        if hasattr(self, "lbl_session_turns"):
+            self.lbl_session_turns.configure(text=f"Today: {turns_count} turns recorded")
 
     def _refresh_models(self) -> None:
         def work() -> None:
@@ -502,18 +542,26 @@ class MarrowAIWindow:
     def _show_models(self, available: bool, models: list[str]) -> None:
         self.status_ollama.set("Ollama: ONLINE" if available else "Ollama: OFFLINE")
         self.pill_ollama.configure(fg=THEME["status_green"] if available else THEME["status_amber"])
-        installed_items = [f"✓ {m} (Installed)" for m in models]
-        catalog_items = [f"⬇ {m} (Download)" for m in MODEL_CATALOG if m not in models]
+        
+        installed_items = [f"[Downloaded] {m}" for m in models]
+        catalog_items = [f"[Download] {m}" for m in MODEL_CATALOG if m not in models]
         choices = installed_items + catalog_items
+        
         self.model_selector["values"] = choices
+        
         if models:
             current = self.model_name.get()
             matched = next((m for m in models if m in current or current in m), models[0])
-            self.model_name.set(f"✓ {matched} (Installed)")
+            self.model_name.set(f"[Downloaded] {matched}")
             if hasattr(self.assistant.model_provider, "model"):
                 self.assistant.model_provider.model = matched
         elif choices:
             self.model_name.set(choices[0])
+        elif not available:
+            self.model_name.set("Ollama offline")
+        else:
+            self.model_name.set("No models downloaded")
+
         prof_label = VOICE_PROFILES.get(self.voice_engine.profile_name, {}).get("label", "Indian English")
         self.status_voice.set(f"Voice: {prof_label}")
 
@@ -534,7 +582,7 @@ class MarrowAIWindow:
 
     def _download_model(self) -> None:
         raw_name = self.model_name.get().strip()
-        clean_name = raw_name.replace("✓ ", "").replace("⬇ ", "").split(" (")[0].strip()
+        clean_name = raw_name.replace("[Downloaded] ", "").replace("[Installed] ", "").replace("[Download] ", "").replace("✓ ", "").replace("⬇ ", "").split(" (")[0].strip()
         if not clean_name:
             messagebox.showerror("Model required", "Please enter or select a model name.")
             return
@@ -568,7 +616,7 @@ class MarrowAIWindow:
         threading.Thread(target=work, daemon=True).start()
 
     def _download_finished(self, model_name: str, success: bool, message: str) -> None:
-        self.btn_download.configure(state="normal", text="⬇ Download Model")
+        self.btn_download.configure(state="normal", text="Download Model")
         if success:
             self.download_pct_str.set("100.0%")
             self.download_progress["value"] = 100.0
@@ -596,15 +644,20 @@ class MarrowAIWindow:
             self.config.ollama_base_url, self.model_name.get().strip() or self.config.model_name
         )
 
+        def on_thinking(thought_text: str) -> None:
+            def update_ui() -> None:
+                self._append(f"\n{thought_text}\n", "thinking_box")
+            self._safe_after(update_ui)
+
         def on_narration(msg: str) -> None:
             def update_ui() -> None:
-                self._append(f"🔊 Spoken Action: {msg}", "narration")
+                self._append(f"[Voice] Spoken Action: {msg}", "narration")
             self._safe_after(update_ui)
             if self.speak_responses.get():
                 threading.Thread(target=self.voice_engine.speak, args=(msg,), daemon=True).start()
 
         def work() -> None:
-            result = self.assistant.process(text, on_narration=on_narration)
+            result = self.assistant.process(text, on_narration=on_narration, on_thinking=on_thinking)
             self._safe_after(lambda: self._show_result(result))
 
         threading.Thread(target=work, daemon=True).start()
@@ -613,9 +666,17 @@ class MarrowAIWindow:
         decision = result.get("decision", "ALLOW")
         status = result.get("status", "unknown")
         output = result.get("output", "")
+        plan_steps = result.get("plan_steps", [])
+        thought = result.get("thought_process", "")
+
+        # If thought process was not shown previously, display steps
+        if plan_steps and not thought:
+            steps_text = "\n".join(f" • {s['description']}" for s in plan_steps)
+            self._append(f"MarrowAI [Thinking]:\n{steps_text}", "narration")
+
 
         if status == "requires_confirmation":
-            conf_msg = output or "⚠️ This high-risk task requires explicit authorization to execute."
+            conf_msg = output or "Security Warning: This high-risk task requires explicit authorization to execute."
             self._append(f"MarrowAI [SECURITY GATE]: {conf_msg}", "blocked")
             if self.speak_responses.get():
                 threading.Thread(target=self.voice_engine.speak, args=("This action requires confirmation.",), daemon=True).start()
@@ -676,7 +737,7 @@ class MarrowAIWindow:
         dialog.transient(self.root)
         dialog.grab_set()
 
-        tk.Label(dialog, text="🎙️ Speak or Transcribe Request", bg=THEME["surface"], fg=THEME["text_primary"], font=("Segoe UI", 12, "bold")).pack(pady=(16, 6))
+        tk.Label(dialog, text="Speak or Transcribe Request", bg=THEME["surface"], fg=THEME["text_primary"], font=("Segoe UI", 12, "bold")).pack(pady=(16, 6))
         tk.Label(dialog, text="Speak your command aloud or enter voice transcription below:", bg=THEME["surface"], fg=THEME["text_secondary"], font=("Segoe UI", 9)).pack(pady=(0, 10))
 
         entry_voice = tk.Entry(dialog, bg=THEME["bg_dark"], fg=THEME["text_primary"], font=("Segoe UI", 10), insertbackground=THEME["accent_cyan"], relief="flat", highlightbackground=THEME["border"], highlightthickness=1)
@@ -704,7 +765,7 @@ class MarrowAIWindow:
 
         header = tk.Frame(modal, bg=THEME["surface"], padx=14, pady=10)
         header.pack(fill="x")
-        tk.Label(header, text="🛡️ Tamper-Evident Security Audit Log", bg=THEME["surface"], fg=THEME["text_primary"], font=("Segoe UI", 12, "bold")).pack(anchor="w")
+        tk.Label(header, text="Tamper-Evident Security Audit Log", bg=THEME["surface"], fg=THEME["text_primary"], font=("Segoe UI", 12, "bold")).pack(anchor="w")
         tk.Label(header, text="All system actions, tool calls, and credential redacting events are logged chronologically.", bg=THEME["surface"], fg=THEME["text_secondary"], font=("Segoe UI", 8)).pack(anchor="w")
 
         text_audit = tk.Text(modal, bg=THEME["bg_dark"], fg=THEME["text_primary"], font=("Consolas", 9), relief="flat", padx=10, pady=10)
@@ -720,6 +781,105 @@ class MarrowAIWindow:
                 text_audit.insert("end", f"[{ts}] {etype}\n{data}\n\n")
 
         text_audit.configure(state="disabled")
+
+    def _review_today_session(self) -> None:
+        """Loads and displays today's complete session history into the chat view."""
+        today = self.assistant.memory.get_today_str()
+        review = self.assistant.memory.review_day_context()
+        self._append("\n═══════════════════════════════════════════════════════════════════", "narration")
+        self._append(f"📅 DAILY CONTEXT SESSION: {today}", "user")
+        self._append(review, "marrow")
+        self._append("═══════════════════════════════════════════════════════════════════\n", "narration")
+        if self.speak_responses.get():
+            threading.Thread(
+                target=self.voice_engine.speak,
+                args=(f"Displaying today's conversational session and context review for {today}.",),
+                daemon=True,
+            ).start()
+
+    def _browse_daily_sessions_modal(self) -> None:
+        """Opens an interactive modal allowing the user to browse day-wise sessions and review any date."""
+        modal = tk.Toplevel(self.root)
+        modal.title("Daily Context Sessions Explorer")
+        modal.geometry("820x540")
+        modal.configure(bg=THEME["bg_dark"])
+
+        header = tk.Frame(modal, bg=THEME["surface"], padx=14, pady=10)
+        header.pack(fill="x")
+        tk.Label(header, text="Day-Wise Context Sessions Explorer", bg=THEME["surface"], fg=THEME["text_primary"], font=("sans-serif", 12, "bold")).pack(anchor="w")
+        tk.Label(header, text="Browse past and current daily sessions with full episodic context, turns, and actions.", bg=THEME["surface"], fg=THEME["text_secondary"], font=("sans-serif", 8)).pack(anchor="w")
+
+        content = tk.Frame(modal, bg=THEME["bg_dark"], padx=12, pady=12)
+        content.pack(fill="both", expand=True)
+        content.columnconfigure(1, weight=1)
+        content.rowconfigure(0, weight=1)
+
+        # Left: listbox of available dates
+        left_pane = tk.Frame(content, bg=THEME["surface"], width=200, padx=8, pady=8, highlightbackground=THEME["border"], highlightthickness=1)
+        left_pane.grid(row=0, column=0, sticky="nsew", padx=(0, 10))
+        tk.Label(left_pane, text="RECORDED DATES", bg=THEME["surface"], fg=THEME["accent_cyan"], font=("sans-serif", 8, "bold")).pack(anchor="w", pady=(0, 4))
+
+        date_listbox = tk.Listbox(left_pane, bg=THEME["bg_dark"], fg=THEME["text_primary"], selectbackground=THEME["accent_blue"], selectforeground="#FFFFFF", font=("sans-serif", 9), relief="flat")
+        date_listbox.pack(fill="both", expand=True)
+
+        days = self.assistant.memory.list_available_days()
+        today = self.assistant.memory.get_today_str()
+        if today not in days:
+            days.append(today)
+            days = sorted(days)
+
+        for d in days:
+            label = f"{d} (Today)" if d == today else d
+            date_listbox.insert("end", label)
+
+        # Right: detail text view showing the selected day's context
+        right_pane = tk.Frame(content, bg=THEME["surface"], padx=8, pady=8, highlightbackground=THEME["border"], highlightthickness=1)
+        right_pane.grid(row=0, column=1, sticky="nsew")
+        right_pane.columnconfigure(0, weight=1)
+        right_pane.rowconfigure(0, weight=1)
+
+        text_detail = tk.Text(right_pane, bg=THEME["bg_dark"], fg=THEME["text_primary"], font=("sans-serif", 9), relief="flat", padx=10, pady=10)
+        text_detail.grid(row=0, column=0, sticky="nsew")
+        scroll = ttk.Scrollbar(right_pane, orient="vertical", command=text_detail.yview)
+        scroll.grid(row=0, column=1, sticky="ns")
+        text_detail.configure(yscrollcommand=scroll.set)
+
+        def on_date_selected(_event: Any = None) -> None:
+            sel = date_listbox.curselection()
+            if not sel:
+                return
+            raw_val = date_listbox.get(sel[0])
+            chosen_date = raw_val.split()[0].strip()
+            rev = self.assistant.memory.review_day_context(date_str=chosen_date)
+            text_detail.configure(state="normal")
+            text_detail.delete("1.0", "end")
+            text_detail.insert("end", rev)
+            text_detail.configure(state="disabled")
+
+        date_listbox.bind("<<ListboxSelect>>", on_date_selected)
+        if days:
+            date_listbox.selection_set(len(days) - 1)
+            on_date_selected()
+
+        # Bottom buttons row
+        btn_bar = tk.Frame(modal, bg=THEME["surface"], padx=14, pady=8)
+        btn_bar.pack(fill="x")
+
+        def load_selected_to_chat() -> None:
+            sel = date_listbox.curselection()
+            if not sel:
+                return
+            raw_val = date_listbox.get(sel[0])
+            chosen_date = raw_val.split()[0].strip()
+            rev = self.assistant.memory.review_day_context(date_str=chosen_date)
+            self._append(f"\n[Loaded Session History for {chosen_date}]:\n{rev}", "marrow")
+            modal.destroy()
+
+        btn_load = tk.Button(btn_bar, text="Load Selected Day into Chat", bg=THEME["accent_blue"], fg="#FFFFFF", font=("sans-serif", 9, "bold"), relief="flat", padx=10, pady=5, command=load_selected_to_chat)
+        btn_load.pack(side="left", padx=(0, 8))
+
+        btn_close = tk.Button(btn_bar, text="Close", bg=THEME["surface_alt"], fg=THEME["text_secondary"], font=("sans-serif", 9), relief="flat", padx=10, pady=5, command=modal.destroy)
+        btn_close.pack(side="right")
 
     def run(self) -> None:
         self.root.mainloop()

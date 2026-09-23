@@ -76,12 +76,15 @@ class InteractiveSession:
                 self._speak(ack)
                 continue
 
+            def _on_thinking(thought: str) -> None:
+                print(f"\n{thought}")
+
             # Real-time spoken announcement before step execution
             def _on_narration(msg: str) -> None:
                 print(f"\nMarrowAI (Voice Announcement): {msg}")
                 self._speak(msg)
 
-            result = self.assistant.process(user_input, on_narration=_on_narration)
+            result = self.assistant.process(user_input, on_narration=_on_narration, on_thinking=_on_thinking)
 
             if result.get("status") == "requires_confirmation":
                 conf_msg = result.get("output", "⚠️ This task requires confirmation to proceed.")

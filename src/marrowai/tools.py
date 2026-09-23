@@ -3,6 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from pathlib import Path
 import os
+import shlex
 import shutil
 import subprocess
 import sys
@@ -55,7 +56,7 @@ class ScaffoldBackendTool(BaseTool):
     def execute(self, parameters: dict[str, Any]) -> ExecutionResult:
         project_name = str(parameters.get("project_name", "backend_project")).strip()
         if not project_name or Path(project_name).name != project_name:
-            return ExecutionResult("blocked", f"Invalid project name: '{project_name}'", None)
+            return ExecutionResult("failed", f"Invalid project name: '{project_name}'", None)
         success = ProjectScaffold().create_backend_project(project_name)
         if success:
             return ExecutionResult("success", f"Scaffolded {project_name}", 0)
@@ -186,24 +187,234 @@ class RemoveFileTool(BaseTool):
 
 class GUIActionTool(BaseTool):
     name = "gui_action"
-    description = "Execute bounded GUI actions (click, type, key) via accessibility fallback."
+    description = "Execute GUI actions including click, click_text (OCR targeting), hover, hover_text, double_click, right_click, move, drag, scroll, type, key, hotkey, and browser_search_and_play."
     schema = {
         "type": "object",
         "properties": {
-            "action": {"type": "string", "enum": ["click", "type", "key"]},
+            "action": {
+                "type": "string",
+                "enum": [
+                    "click", "click_text", "hover", "hover_text", "double_click", "right_click", "middle_click",
+                    "move", "drag", "scroll", "type", "key", "hotkey",
+                    "list_windows", "active_window", "focus_window", "close_window",
+                    "switch_tab", "new_tab", "close_tab", "list_tabs",
+                    "browser_search_and_play", "watch_youtube", "play_youtube",
+                ],
+            },
             "parameters": {"type": "object"},
+        },
+        "required": [],
+    }
+
+    def __init__(self, executor: Any = None) -> None:
+        from .gui_automation import GUIAutomationExecutor
+        self._executor = executor or GUIAutomationExecutor()
+
+    def execute(self, parameters: dict[str, Any]) -> ExecutionResult:
+        action = str(parameters.get("action", "")).strip().lower()
+        action_params = parameters.get("parameters", {})
+        if not action_params:
+            action_params = {k: v for k, v in parameters.items() if k != "action"}
+
+        # Infer action if omitted or called via aliased tool
+        if not action:
+            if "query" in parameters or "query" in action_params:
+                action = "browser_search_and_play"
+            elif "text" in parameters or "text" in action_params:
+                action = "type"
+            elif "key" in parameters or "key" in action_params:
+                action = "key"
+            elif "combo" in parameters or "combo" in action_params:
+                action = "hotkey"
+            elif ("x" in parameters or "x" in action_params) and ("y" in parameters or "y" in action_params):
+                action = "click"
+            elif "direction" in parameters or "direction" in action_params:
+                action = "scroll"
+            else:
+                action = "click"
+
+        return self._executor.execute_action(action, action_params)
+
+
+class ScreenPerceptionTool(BaseTool):
+    name = "screen_perception"
+    description = "Capture screen, perform OCR to read on-screen text, locate visual text targets with exact coordinates, and describe the screen."
+    schema = {
+        "type": "object",
+        "properties": {
+            "action": {
+                "type": "string",
+                "enum": ["describe_screen", "read_screen", "find_text", "capture_screen"],
+            },
+            "query": {"type": "string"},
+            "output_path": {"type": "string"},
         },
         "required": ["action"],
     }
 
-    def __init__(self) -> None:
-        from .gui_automation import GUIAutomationExecutor
-        self._executor = GUIAutomationExecutor()
+    def __init__(self, vision_engine: Any = None) -> None:
+        from .screen_vision import ScreenVisionEngine
+        self._vision = vision_engine or ScreenVisionEngine()
 
     def execute(self, parameters: dict[str, Any]) -> ExecutionResult:
-        action = str(parameters.get("action", ""))
-        action_params = parameters.get("parameters", {})
-        return self._executor.execute_action(action, action_params)
+        action = str(parameters.get("action", "describe_screen")).lower().strip()
+        import json
+
+        if action in {"describe_screen", "describe", "summary"}:
+            desc = self._vision.describe_screen()
+            return ExecutionResult("success", desc, 0)
+
+        if action in {"read_screen", "read", "ocr"}:
+            elements = self._vision.read_screen()
+            serializable = [
+                {
+                    "text": el.text,
+                    "confidence": round(el.confidence, 3),
+                    "center": [el.center_x, el.center_y],
+                    "width": el.width,
+                    "height": el.height,
+                }
+                for el in elements
+            ]
+            return ExecutionResult("success", json.dumps(serializable, indent=2), 0)
+
+        if action in {"find_text", "find", "locate"}:
+            query = str(parameters.get("query") or parameters.get("target") or parameters.get("text", "")).strip()
+            if not query:
+                return ExecutionResult("failed", "Missing 'query' parameter to find on screen.", 1)
+            matches = self._vision.find_text_on_screen(query)
+            if not matches:
+                return ExecutionResult("failed", f"Text '{query}' not found on screen.", 1)
+            serializable = [
+                {
+                    "text": m.text,
+                    "confidence": round(m.confidence, 3),
+                    "center": [m.center_x, m.center_y],
+                    "box": m.box,
+                }
+                for m in matches
+            ]
+            return ExecutionResult("success", json.dumps(serializable, indent=2), 0)
+
+        if action in {"capture_screen", "capture", "screenshot"}:
+            out_path = parameters.get("output_path")
+            cap = self._vision.capture_screen(output_path=str(out_path) if out_path else None)
+            if cap.get("status") == "success":
+                return ExecutionResult("success", f"Screenshot saved to {cap['path']} ({cap['width']}x{cap['height']})", 0)
+            return ExecutionResult("failed", f"Failed to capture screen: {cap.get('error')}", 1)
+
+        return ExecutionResult("failed", f"Unsupported screen action: '{action}'", 1)
+
+
+class WindowManagementTool(BaseTool):
+    name = "window_management"
+    description = "List open windows, detect active window, focus windows, and manage browser/editor tabs."
+    schema = {
+        "type": "object",
+        "properties": {
+            "action": {
+                "type": "string",
+                "enum": [
+                    "list_windows", "active_window", "focus_window", "close_window",
+                    "switch_tab", "new_tab", "close_tab", "list_tabs",
+                ],
+            },
+            "target": {"type": "string"},
+            "direction": {"type": "string"},
+            "index": {"type": "integer"},
+            "url": {"type": "string"},
+        },
+        "required": ["action"],
+    }
+
+    def __init__(self, executor: Any = None) -> None:
+        from .gui_automation import GUIAutomationExecutor
+        self._executor = executor or GUIAutomationExecutor()
+
+    def execute(self, parameters: dict[str, Any]) -> ExecutionResult:
+        action = str(parameters.get("action", "list_windows")).lower().strip()
+        import json
+
+        if action in {"list_windows", "list", "open_windows", "windows"}:
+            wins = self._executor.list_open_windows()
+            return ExecutionResult("success", json.dumps(wins, indent=2), 0)
+
+        if action in {"active_window", "active", "current_window"}:
+            win = self._executor.get_active_window()
+            return ExecutionResult("success", json.dumps(win, indent=2), 0)
+
+        if action in {"focus_window", "focus", "switch_to_window"}:
+            target = str(parameters.get("target") or parameters.get("title") or parameters.get("app_name", "")).strip()
+            if not target:
+                return ExecutionResult("failed", "Missing 'target' window title or ID.", 1)
+            return self._executor.focus_window(target)
+
+        if action in {"close_window", "close"}:
+            target = parameters.get("target")
+            return self._executor.close_window(str(target) if target else None)
+
+        if action in {"switch_tab", "tab_switch"}:
+            direction = str(parameters.get("direction", "next"))
+            index = parameters.get("index")
+            return self._executor.switch_tab(direction=direction, index=int(index) if index else None)
+
+        if action in {"new_tab", "open_tab"}:
+            url = parameters.get("url")
+            return self._executor.new_tab(str(url) if url else None)
+
+        if action in {"close_tab"}:
+            target = parameters.get("target") or parameters.get("window") or parameters.get("app")
+            return self._executor.close_tab(target_window=str(target) if target else None)
+
+
+        if action in {"list_tabs", "tabs"}:
+            tabs_info = self._executor.list_tabs()
+            return ExecutionResult("success", json.dumps(tabs_info, indent=2), 0)
+
+        return ExecutionResult("failed", f"Unsupported window management action: '{action}'", 1)
+
+
+class DailyContextTool(BaseTool):
+    name = "daily_context"
+    description = "Review, inspect, and retrieve today's and previous days' context journals."
+    schema = {
+        "type": "object",
+        "properties": {
+            "action": {
+                "type": "string",
+                "enum": ["review_today", "get_history", "list_days"],
+            },
+            "date": {"type": "string"},
+            "max_turns": {"type": "integer", "default": 40},
+        },
+        "required": ["action"],
+    }
+
+    def __init__(self, memory_store: Any = None) -> None:
+        from .memory import MemoryStore
+        self._memory = memory_store or MemoryStore()
+
+    def execute(self, parameters: dict[str, Any]) -> ExecutionResult:
+        action = str(parameters.get("action", "review_today")).lower().strip()
+        import json
+
+        if action in {"review_today", "review", "today"}:
+            date_str = parameters.get("date")
+            max_turns = int(parameters.get("max_turns", 40))
+            review_text = self._memory.review_day_context(date_str=str(date_str) if date_str else None, max_turns=max_turns)
+            return ExecutionResult("success", review_text, 0)
+
+        if action in {"get_history", "history", "get_day"}:
+            date_str = parameters.get("date")
+            ctx = self._memory.get_daily_context(date_str=str(date_str) if date_str else None)
+            return ExecutionResult("success", json.dumps(ctx, indent=2), 0)
+
+        if action in {"list_days", "list_dates"}:
+            days = self._memory.list_available_days()
+            return ExecutionResult("success", json.dumps(days, indent=2), 0)
+
+        return ExecutionResult("failed", f"Unsupported daily context action: '{action}'", 1)
+
 
 
 class DesktopActionTool(BaseTool):
@@ -226,7 +437,32 @@ class DesktopActionTool(BaseTool):
     }
 
     def execute(self, parameters: dict[str, Any]) -> ExecutionResult:
+        import shlex
         action = str(parameters.get("action", "")).strip().lower()
+
+        # Resilient action inference if LLM omitted 'action'
+        if not action:
+            if "app_name" in parameters or "app" in parameters:
+                action = "launch_app"
+            elif "package_name" in parameters or "pkg" in parameters:
+                action = "install_package"
+            elif "url" in parameters:
+                action = "open_url"
+            elif "path" in parameters:
+                action = "open_file_manager"
+            elif "target" in parameters:
+                target_val = str(parameters["target"]).strip()
+                if target_val.startswith(("http://", "https://", "www.")):
+                    action = "open_url"
+                elif Path(target_val).is_dir():
+                    action = "open_file_manager"
+                else:
+                    action = "launch_app"
+            elif "command" in parameters:
+                action = "launch_app"
+                parameters["app_name"] = parameters["command"]
+            else:
+                action = "launch_app"
 
         if action in {"open_url", "open_browser", "open_link"}:
             raw_url = str(parameters.get("target", parameters.get("url", "https://www.youtube.com"))).strip()
@@ -268,27 +504,50 @@ class DesktopActionTool(BaseTool):
                 return ExecutionResult("failed", f"Failed to open file manager: {exc}", 1)
 
         if action in {"launch_app", "open_app"}:
-            app_name = str(parameters.get("app_name", parameters.get("target", ""))).strip().lower()
+            raw_app = (
+                parameters.get("app_name")
+                or parameters.get("target")
+                or parameters.get("command")
+                or parameters.get("name")
+                or parameters.get("app", "")
+            )
+            app_name = str(raw_app).strip().lower()
             if not app_name:
                 return ExecutionResult("failed", "No application name specified.", 1)
 
             app_candidates: dict[str, list[str]] = {
+                "libre writer": ["lowriter", "libreoffice --writer", "soffice --writer", "libreoffice"],
+                "libreoffice writer": ["lowriter", "libreoffice --writer", "soffice --writer", "libreoffice"],
+                "libre-writer": ["lowriter", "libreoffice --writer", "soffice --writer", "libreoffice"],
+                "writer": ["lowriter", "libreoffice --writer", "soffice --writer", "libreoffice"],
+                "libreoffice-writer": ["lowriter", "libreoffice --writer", "soffice --writer", "libreoffice"],
+                "libre calc": ["localc", "libreoffice --calc", "libreoffice"],
+                "libreoffice calc": ["localc", "libreoffice --calc", "libreoffice"],
+                "libre impress": ["loimpress", "libreoffice --impress", "libreoffice"],
+                "libreoffice impress": ["loimpress", "libreoffice --impress", "libreoffice"],
+                "libreoffice": ["libreoffice", "soffice", "lowriter"],
                 "appcenter": ["gnome-software", "snap-store", "io.elementary.appcenter", "plasma-discover"],
                 "software": ["gnome-software", "snap-store", "software-properties-gtk"],
                 "chromium": ["chromium-browser", "chromium", "google-chrome", "google-chrome-stable"],
                 "chrome": ["google-chrome", "google-chrome-stable", "chromium-browser", "chromium"],
                 "firefox": ["firefox"],
                 "terminal": ["gnome-terminal", "konsole", "xfce4-terminal", "xterm"],
-                "editor": ["gedit", "kate", "mousepad", "code", "nano"],
+                "editor": ["gedit", "code", "kate", "mousepad", "nano"],
+                "text editor": ["gedit", "code", "kate", "mousepad"],
+                "gedit": ["gedit", "code", "kate", "mousepad"],
+                "vscode": ["code", "codium", "gedit"],
+                "vs code": ["code", "codium", "gedit"],
+                "code": ["code", "codium", "gedit"],
                 "calc": ["gnome-calculator", "kcalc", "xcalc"],
             }
 
             binaries = app_candidates.get(app_name, [app_name])
             launched_bin = None
             for b in binaries:
-                if shutil.which(b):
+                parts = shlex.split(b)
+                if shutil.which(parts[0]):
                     try:
-                        subprocess.Popen([b], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                        subprocess.Popen(parts, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                         launched_bin = b
                         break
                     except Exception:
@@ -297,9 +556,11 @@ class DesktopActionTool(BaseTool):
             if launched_bin:
                 return ExecutionResult("success", f"Launched application '{launched_bin}'.", 0)
 
-            if shutil.which(app_name):
+            # Direct fallback execution with shlex
+            parts = shlex.split(app_name)
+            if parts and shutil.which(parts[0]):
                 try:
-                    subprocess.Popen([app_name], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    subprocess.Popen(parts, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                     return ExecutionResult("success", f"Launched application '{app_name}'.", 0)
                 except Exception as exc:
                     return ExecutionResult("failed", f"Failed to launch '{app_name}': {exc}", 1)
@@ -314,6 +575,7 @@ class DesktopActionTool(BaseTool):
                 return ExecutionResult("success", "Desktop software center checked.", 0)
 
             return ExecutionResult("failed", f"Application '{app_name}' is not installed or not in PATH.", 1)
+
 
         if action in {"install_package", "download_package"}:
             pkg = str(parameters.get("package_name", parameters.get("target", ""))).strip()
@@ -359,7 +621,7 @@ class DesktopActionTool(BaseTool):
             except Exception as exc:
                 return ExecutionResult("failed", f"Error during package installation: {exc}", 1)
 
-        return ExecutionResult("blocked", f"Unsupported desktop action '{action}'.", 1)
+        return ExecutionResult("failed", f"Unsupported desktop action '{action}'.", 1)
 
 
 class ManageVMTool(BaseTool):
@@ -393,7 +655,7 @@ class ManageVMTool(BaseTool):
 
         if action == "ensure":
             ok, msg = self._manager.ensure_hypervisor(os_type=os_type)
-            status = "success" if ok else "blocked"
+            status = "success" if ok else "failed"
             return ExecutionResult(status, msg, 0 if ok else 1)
 
         if action == "create":
@@ -405,7 +667,7 @@ class ManageVMTool(BaseTool):
                 return ExecutionResult("success", f"VM '{vm_name}' status:\n{info}", 0)
             return ExecutionResult("failed", f"VM '{vm_name}' does not exist.", 1)
 
-        return ExecutionResult("blocked", f"Unsupported VM action: '{action}'", None)
+        return ExecutionResult("failed", f"Unsupported VM action: '{action}'", None)
 
 
 class ManageModelsTool(BaseTool):
@@ -452,7 +714,7 @@ class ManageModelsTool(BaseTool):
 
         if action == "pull":
             if not model_name:
-                return ExecutionResult("blocked", "No model name specified for download.", None)
+                return ExecutionResult("failed", "No model name specified for download.", None)
 
             # Check if model is already downloaded first
             if self._manager.is_available():
@@ -492,7 +754,7 @@ class ManageModelsTool(BaseTool):
                 return ExecutionResult("success", f"Successfully downloaded and verified '{model_name}'.", 0)
             return ExecutionResult("failed", f"Could not download '{model_name}': {message}", 1)
 
-        return ExecutionResult("blocked", f"Unsupported model action: '{action}'", None)
+        return ExecutionResult("failed", f"Unsupported model action: '{action}'", None)
 
 
 class SystemStatusTool(BaseTool):
@@ -549,6 +811,20 @@ class RunCommandTool(BaseTool):
             if not command.startswith("sudo -S"):
                 command = command.replace("sudo ", "sudo -S ", 1)
             input_data = f"{password}\n"
+
+        # Prevent blocking or timing out on GUI or browser launch commands
+        if any(w in command for w in ["xdg-open", "sensible-browser", "x-www-browser", "google-chrome", "firefox"]):
+            try:
+                proc = subprocess.Popen(
+                    command,
+                    shell=True,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    cwd=cwd,
+                )
+                return ExecutionResult("success", f"Launched GUI process detached (PID: {proc.pid}).", 0)
+            except Exception as exc:
+                return ExecutionResult("failed", f"Failed to launch detached GUI command: {exc}", 1)
 
         try:
             completed = subprocess.run(
@@ -631,7 +907,7 @@ class ManageMemoryTool(BaseTool):
             removed = self._memory.forget(keyword)
             return ExecutionResult("success", f"Removed {removed} memory item(s) matching '{keyword}'.", 0)
 
-        return ExecutionResult("blocked", f"Unsupported memory action: '{action}'", None)
+        return ExecutionResult("failed", f"Unsupported memory action: '{action}'", None)
 
 
 class ToolRegistry:
@@ -651,7 +927,15 @@ class ToolRegistry:
         self.register(EchoTool())
         self.register(ReadFileTool())
         self.register(WriteFileTool())
-        self.register(GUIActionTool())
+        gui_tool = GUIActionTool()
+        self.register(gui_tool)
+        for alias in [
+            "click", "left_click", "double_click", "right_click", "middle_click",
+            "hover", "hover_text", "mouse_hover", "move", "mousemove",
+            "type", "type_text", "key", "press_key", "hotkey", "scroll",
+            "click_text", "browser_search_and_play", "watch_youtube", "play_youtube",
+        ]:
+            self._tools[alias] = gui_tool
         self.register(ManageVMTool())
         self.register(ManageModelsTool())
         self.register(SystemStatusTool())
@@ -671,6 +955,20 @@ class ToolRegistry:
         self._tools["launch_app"] = desktop_tool
         self._tools["open_url"] = desktop_tool
         self._tools["install_package"] = desktop_tool
+        screen_tool = ScreenPerceptionTool()
+        self.register(screen_tool)
+        self._tools["screen"] = screen_tool
+        self._tools["screen_perception"] = screen_tool
+        win_tool = WindowManagementTool()
+        self.register(win_tool)
+        self._tools["windows"] = win_tool
+        self._tools["tabs"] = win_tool
+        self._tools["window_management"] = win_tool
+        daily_tool = DailyContextTool()
+        self.register(daily_tool)
+        self._tools["daily_context"] = daily_tool
+        self._tools["daily_memory"] = daily_tool
+
 
     def register(self, tool: BaseTool) -> None:
         self._tools[tool.name] = tool
@@ -687,7 +985,7 @@ class ToolRegistry:
     def execute(self, tool_name: str, parameters: dict[str, Any] | None = None) -> ExecutionResult:
         tool = self.get(tool_name)
         if not tool:
-            return ExecutionResult("blocked", f"Tool is not allowlisted: {tool_name}", None)
+            return ExecutionResult("failed", f"Tool is not allowlisted or does not exist: {tool_name}", None)
         return tool.execute(parameters or {})
 
 
@@ -703,7 +1001,32 @@ class ToolRouter:
         if password and "password" not in args:
             args["password"] = password
 
+        # Normalize desktop actions
+        if tool_name in {"launch_app", "open_app"}:
+            tool_name = "desktop_action"
+            args.setdefault("action", "launch_app")
+            if "app_name" not in args and "target" in args:
+                args["app_name"] = args["target"]
+        elif tool_name in {"open_url", "open_browser"}:
+            tool_name = "desktop_action"
+            args.setdefault("action", "open_url")
+        elif tool_name == "desktop_action":
+            if "action" not in args:
+                if "app_name" in args:
+                    args["action"] = "launch_app"
+                elif "url" in args or (isinstance(args.get("target"), str) and args["target"].startswith("http")):
+                    args["action"] = "open_url"
+                elif "package_name" in args:
+                    args["action"] = "install_package"
+                else:
+                    args["action"] = "launch_app"
+        elif tool_name in {"close_tab", "switch_tab", "new_tab", "list_tabs", "list_windows", "active_window", "focus_window"}:
+            action_name = tool_name
+            tool_name = "window_management"
+            args.setdefault("action", action_name)
+
         # Set appropriate timeout based on action type
+
         timeout = 30
         if step.action_type in {"cli", "install_package", "manage_vm"}:
             timeout = 120

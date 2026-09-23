@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 import json
 from pathlib import Path
 import re
@@ -10,13 +11,17 @@ from .vector_db import EmbeddedVectorDB
 
 
 class MemoryStore:
-    """Long-term memory store combining JSON session state and an embedded SQLite vector database."""
+    """Long-term memory store combining JSON state, daily episodic context, and SQLite vector DB."""
 
     def __init__(self, path: str | None = None) -> None:
         self.path = Path(path or ".marrowai/memory.json")
         self.path.parent.mkdir(parents=True, exist_ok=True)
         if not self.path.exists():
             self.path.write_text("{}", encoding="utf-8")
+
+        # Colocated daily context directory
+        self.daily_context_dir = self.path.parent / "daily_context"
+        self.daily_context_dir.mkdir(parents=True, exist_ok=True)
 
         # Database path colocated with memory path
         db_name = f"{self.path.stem}_vector.db" if path else "vector_memory.db"
@@ -79,6 +84,109 @@ class MemoryStore:
     def count_memories(self, category: str | None = None) -> int:
         """Returns the total number of memories stored."""
         return self.vector_db.count(category=category)
+
+    # ---------------------------------------------------------
+    # Daily Context & Episodic Journal Tracking
+    # ---------------------------------------------------------
+
+    def get_today_str(self) -> str:
+        """Returns today's date string (YYYY-MM-DD)."""
+        return datetime.date.today().isoformat()
+
+    def record_daily_turn(
+        self,
+        role: str,
+        message: str,
+        details: dict[str, Any] | None = None,
+        date_str: str | None = None,
+    ) -> None:
+        """Records an interaction turn in today's persistent daily context journal."""
+        today = date_str or self.get_today_str()
+        file_path = self.daily_context_dir / f"{today}.json"
+
+        day_data: dict[str, Any] = {"date": today, "turns": []}
+        if file_path.exists():
+            try:
+                with file_path.open("r", encoding="utf-8") as f:
+                    loaded = json.load(f)
+                    if isinstance(loaded, dict):
+                        day_data = loaded
+            except Exception:
+                pass
+
+        turns = day_data.setdefault("turns", [])
+        entry = {
+            "turn_id": len(turns) + 1,
+            "timestamp": time.time(),
+            "time_str": time.strftime("%H:%M:%S", time.localtime()),
+            "role": role,
+            "message": message,
+        }
+        if details:
+            entry["details"] = details
+
+        turns.append(entry)
+        with file_path.open("w", encoding="utf-8") as f:
+            json.dump(day_data, f, indent=2)
+
+        # Keep session history in memory.json for backward compatibility
+        self.add_event(role, message)
+
+        # Index turn into vector DB for cross-day semantic retrieval
+        if len(message.strip()) > 10:
+            self.vector_db.add(
+                text=f"[{today} {role}] {message}",
+                category="daily_context",
+                metadata={"date": today, "role": role},
+            )
+
+    def get_daily_context(self, date_str: str | None = None) -> dict[str, Any]:
+        """Loads and returns the structured context for the given date (default today)."""
+        today = date_str or self.get_today_str()
+        file_path = self.daily_context_dir / f"{today}.json"
+        if file_path.exists():
+            try:
+                with file_path.open("r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    if isinstance(data, dict):
+                        return data
+            except Exception:
+                pass
+        return {"date": today, "turns": []}
+
+    def review_day_context(self, date_str: str | None = None, max_turns: int = 50) -> str:
+        """Returns a comprehensive, formatted review string of that day's dialogue and actions."""
+        context = self.get_daily_context(date_str)
+        today = context.get("date", self.get_today_str())
+        turns = context.get("turns", [])
+        if not turns:
+            return f"Daily Context ({today}): No previous interactions recorded for this date."
+
+        lines = [f"Daily Context Review for {today} ({len(turns)} total turns):"]
+        for item in turns[-max_turns:]:
+            t_str = item.get("time_str", "")
+            r = item.get("role", "user").capitalize()
+            msg = item.get("message", "").strip()
+            # Collapse multi-line messages for compact context
+            collapsed_msg = " ".join(msg.splitlines())
+            if len(collapsed_msg) > 160:
+                collapsed_msg = collapsed_msg[:160] + "..."
+            lines.append(f"- [{t_str}] {r}: {collapsed_msg}")
+
+            if item.get("details"):
+                d = item["details"]
+                if "intent" in d:
+                    lines.append(f"    (Intent: {d['intent']})")
+                if "status" in d:
+                    lines.append(f"    (Status: {d['status']})")
+
+        return "\n".join(lines)
+
+    def list_available_days(self) -> list[str]:
+        """Returns all recorded dates in chronological order."""
+        if not self.daily_context_dir.exists():
+            return []
+        return sorted([f.stem for f in self.daily_context_dir.glob("*.json")])
 
     def add_event(self, role: str, message: str) -> None:
         """Records a conversation event in session history."""
@@ -174,7 +282,7 @@ class MemoryStore:
             self.vector_db.add(text=fact_text, category=cat, metadata=meta)
             stored_facts.append(fact_text)
 
-        # If user input contains a question or substantial conversational statement, also index the dialogue turn
+        # If user input contains a substantial conversational turn, index it
         if len(text) > 20 and not text.startswith(("/", "$", "run")):
             self.vector_db.add(
                 text=f"User said: {text}",
@@ -185,10 +293,8 @@ class MemoryStore:
         return stored_facts
 
     def build_context(self, user_input: str) -> str:
-        """Constructs an augmented context prompt including semantic memories, profile, and recent events."""
+        """Constructs an augmented context prompt reviewing today's full context, profile, and semantic memories."""
         data = self._load()
-        history = data.get("history", [])
-        recent = history[-6:]
         profile = data.get("profile", {})
         parts: list[str] = []
 
@@ -196,7 +302,21 @@ class MemoryStore:
         if profile:
             parts.append(f"User profile: {json.dumps(profile, sort_keys=True)}")
 
-        # 2. Semantic Long-Term Memory Retrieval via Vector DB
+        # 2. Comprehensive Review of Today's Context
+        today_review = self.review_day_context(max_turns=30)
+        parts.append(today_review)
+
+        # 3. Fallback: Recent Interaction History from memory.json if no daily turns
+        if "No previous interactions" in today_review:
+            history = data.get("history", [])
+            recent = history[-6:]
+            if recent:
+                recent_lines = ["Recent interaction:"]
+                for item in recent:
+                    recent_lines.append(f"- {item['role']}: {item['message']}")
+                parts.append("\n".join(recent_lines))
+
+        # 4. Semantic Long-Term Memory Retrieval via Vector DB
         if user_input.strip():
             similar = self.vector_db.search(query=user_input, limit=4, min_score=0.18)
             if similar:
@@ -207,14 +327,7 @@ class MemoryStore:
                     mem_lines.append(f"- [{cat} | score: {score:.2f}] {mem['text']}")
                 parts.append("\n".join(mem_lines))
 
-        # 3. Recent Interaction History
-        if recent:
-            recent_lines = ["Recent interaction:"]
-            for item in recent:
-                recent_lines.append(f"- {item['role']}: {item['message']}")
-            parts.append("\n".join(recent_lines))
-
-        # 4. Current Request
+        # 5. Current Request
         if user_input:
             parts.append(f"Current request: {user_input}")
 

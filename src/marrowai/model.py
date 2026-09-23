@@ -24,8 +24,13 @@ class ModelProvider(ABC):
 
 class OllamaProvider(ModelProvider):
     def __init__(self, base_url: str | None = None, model: str = "llama3.2") -> None:
-        self.configured_base_url = (base_url or "http://127.0.0.1:11434").rstrip("/")
-        self.base_url = discover_ollama_base_url(self.configured_base_url)
+        self._explicit_base_url = base_url is not None
+        if self._explicit_base_url:
+            self.configured_base_url = base_url.rstrip("/")
+            self.base_url = self.configured_base_url
+        else:
+            self.configured_base_url = "http://127.0.0.1:11434"
+            self.base_url = discover_ollama_base_url(self.configured_base_url)
         self.configured_model = model
         self.model = model
         self._fallback_planner = RuleBasedPlanner()
@@ -42,20 +47,21 @@ class OllamaProvider(ModelProvider):
         except Exception:
             pass
 
-        # Try rediscovery in case environment/gateway changed
-        discovered = discover_ollama_base_url(self.configured_base_url)
-        if discovered != self.base_url:
-            self.base_url = discovered
-            try:
-                request = urllib.request.Request(
-                    f"{self.base_url}/api/tags",
-                    headers={"Accept": "application/json"},
-                    method="GET",
-                )
-                with urllib.request.urlopen(request, timeout=1.5) as resp:
-                    return resp.status == 200
-            except Exception:
-                pass
+        # Try rediscovery in case environment/gateway changed (only when base_url was not explicitly pinned)
+        if not self._explicit_base_url:
+            discovered = discover_ollama_base_url(self.configured_base_url)
+            if discovered != self.base_url:
+                self.base_url = discovered
+                try:
+                    request = urllib.request.Request(
+                        f"{self.base_url}/api/tags",
+                        headers={"Accept": "application/json"},
+                        method="GET",
+                    )
+                    with urllib.request.urlopen(request, timeout=1.5) as resp:
+                        return resp.status == 200
+                except Exception:
+                    pass
         return False
 
     def _resolve_model(self) -> str:
@@ -83,16 +89,26 @@ class OllamaProvider(ModelProvider):
             return self.configured_model
 
     def generate_plan(self, user_input: str) -> TaskPlan:
+        # Fast-path check: Check rule-based planner first for deterministic high-confidence requests
+        rule_plan = self._fallback_planner.plan(user_input)
+        if rule_plan.intent not in {"unknown", "general_question"} and rule_plan.steps:
+            return rule_plan
+
         if not self.is_available():
-            return self._fallback_planner.plan(user_input)
+            return rule_plan
 
         active_model = self._resolve_model()
 
         payload = {
             "model": active_model,
+            "format": "json",
             "prompt": (
-                "You are MarrowAI, an autonomous Linux operating assistant. Return valid JSON only with keys: intent, risk_level, steps.\n"
+                "You are MarrowAI, an autonomous agent. Return valid JSON only with keys: intent, risk_level, steps.\n"
                 "Allowed tools and parameters:\n"
+                "- screen_perception: parameters {\"action\": \"describe_screen\"|\"read_screen\"|\"find_text\"|\"capture_screen\", \"query\": \"...\"}\n"
+                "- window_management: parameters {\"action\": \"list_windows\"|\"active_window\"|\"focus_window\"|\"close_window\"|\"switch_tab\"|\"new_tab\"|\"close_tab\"|\"list_tabs\", \"target\": \"...\", \"direction\": \"next\"|\"prev\", \"index\": 1}\n"
+                "- gui_action: parameters {\"action\": \"click\"|\"click_text\"|\"hover\"|\"hover_text\"|\"double_click\"|\"right_click\"|\"type\"|\"key\"|\"hotkey\"|\"scroll\"|\"browser_search_and_play\", \"parameters\": {\"x\": 0, \"y\": 0, \"text\": \"...\", \"key\": \"Return\", \"combo\": \"ctrl+t\", \"direction\": \"down\", \"target_window\": \"...\", \"query\": \"...\"}}\n"
+                "- daily_context: parameters {\"action\": \"review_today\"|\"get_history\"|\"list_days\", \"date\": \"...\"}\n"
                 "- desktop_action: parameters {\"action\": \"open_url\"|\"open_file_manager\"|\"launch_app\"|\"install_package\", \"target\": \"...\", \"app_name\": \"...\", \"package_name\": \"...\"}\n"
                 "- run_command: parameters {\"command\": \"...\"}\n"
                 "- system_status: parameters {}\n"
@@ -100,15 +116,22 @@ class OllamaProvider(ModelProvider):
                 "- manage_models: parameters {\"action\": \"list\"|\"pull\", \"model_name\": \"...\"}\n"
                 "- manage_memory: parameters {\"action\": \"store\"|\"search\"|\"list\", \"text\": \"...\"}\n"
                 "- list_files: parameters {\"path\": \".\"}\n"
-                "- run_tests: parameters {\"path\": \".\"}\n"
-                "- scaffold_backend: parameters {\"project_name\": \"...\"}\n"
-                "- echo: parameters {\"text\": \"...\"}\n"
-                "To watch a movie, video, music, or search the web, use desktop_action with action 'open_url' and target URL (e.g. YouTube search https://www.youtube.com/results?search_query=... or Google search https://www.google.com/search?q=...).\n"
-                "Use risk_level \"low\" for safe read/desktop/browser queries, \"medium\" for installation/modification, and \"high\" for destructive commands.\n"
-                "Example: {\"intent\":\"watch_movie\",\"risk_level\":\"low\",\"steps\":[{\"id\":\"step-1\",\"action_type\":\"desktop\",\"tool_name\":\"desktop_action\",\"description\":\"Open browser to search and stream movie\",\"parameters\":{\"action\":\"open_url\",\"target\":\"https://www.youtube.com/results?search_query=watch+aashiqui+2+movie\"},\"approval_required\":false}]}\n"
-                f"User request: {user_input}"
+                "- write_file: parameters {\"path\": \"...\", \"content\": \"...\"}\n"
+                "- echo: parameters {\"text\": \"...\"} -> Use this tool to answer general questions, explanations, greetings, or chat conversation.\n"
+                "IMPORTANT: You are a fully autonomous JARVIS-like assistant with complete control over this desktop. You have full autonomous vision of the screen, window/tab awareness, terminal, file system, and mouse/keyboard control (clicking, hovering, typing, shortcuts).\n"
+                "- When the user asks to watch or play a song, video, or movie, use 'desktop_action' with open_url (https://www.youtube.com/results?search_query=...) or 'gui_action' with 'browser_search_and_play' to autonomously find and stream the video.\n"
+                "- When the user asks a question, definition, or explanation, ALWAYS use the 'echo' tool with your answer in parameters {\"text\": \"...\"}.\n"
+                "- Use 'window_management' and 'gui_action' when user wants to control windows, tabs, click, hover, scroll, or type.\n"
+                "Use risk_level \"low\" for safe read queries and GUI interactions, \"medium\" for system modifications, and \"high\" for destructive commands.\n"
+                "Example for questions: {\"intent\":\"answer_question\",\"risk_level\":\"low\",\"steps\":[{\"id\":\"step-1\",\"action_type\":\"tool\",\"tool_name\":\"echo\",\"description\":\"Answer user question\",\"parameters\":{\"text\":\"Arch Linux is a lightweight Linux distribution...\"},\"approval_required\":false}]}\n"
+                f"User Context & Request: {user_input}"
+
             ),
             "stream": False,
+            "options": {
+                "num_predict": 256,
+                "temperature": 0.2,
+            },
         }
 
         request = urllib.request.Request(
@@ -119,16 +142,24 @@ class OllamaProvider(ModelProvider):
         )
 
         try:
-            with urllib.request.urlopen(request, timeout=12) as resp:
+            with urllib.request.urlopen(request, timeout=30) as resp:
                 response_text = resp.read().decode("utf-8")
         except Exception:
-            return self._fallback_planner.plan(user_input)
+            return rule_plan
 
         try:
             response = json.loads(response_text)
             text = response.get("response", "")
+            
+            import re
+            json_str = text
+            # Extract JSON block if surrounded by markdown or conversational filler
+            m = re.search(r'\{.*\}', text, re.DOTALL)
+            if m:
+                json_str = m.group(0)
+
             try:
-                data = json.loads(text)
+                data = json.loads(json_str)
                 if isinstance(data, dict):
                     steps = data.get("steps", [])
                     parsed_steps: list[PlanStep] = []
@@ -140,12 +171,45 @@ class OllamaProvider(ModelProvider):
 
                         # Normalize media/movie actions produced by LLMs
                         action_field = step.get("action") or params.get("action", "")
-                        if action_field in {"search_movie_source", "open_browser", "play_media", "search_web", "watch_movie"}:
+                        if action_field in {"search_movie_source", "open_browser", "play_media", "search_web", "watch_movie", "watch_youtube", "browser_search_and_play"}:
+                            clean_q = params.get("query") or params.get("text") or user_input.strip()
+                            enc_query = urllib.parse.quote_plus(clean_q)
                             tool_name = "desktop_action"
                             action_type = "desktop"
-                            if not params.get("target"):
-                                enc_query = urllib.parse.quote_plus(user_input.strip())
-                                params = {"action": "open_url", "target": f"https://www.youtube.com/results?search_query={enc_query}"}
+                            params = {"action": "open_url", "target": f"https://www.youtube.com/results?search_query={enc_query}", "query": clean_q}
+                        elif tool_name in {"launch_app", "open_app"}:
+                            tool_name = "desktop_action"
+                            params.setdefault("action", "launch_app")
+                            if "app_name" not in params and "target" in params:
+                                params["app_name"] = params["target"]
+                        elif tool_name == "desktop_action":
+                            if "action" not in params:
+                                if action_field:
+                                    params["action"] = action_field
+                                elif "app_name" in params:
+                                    params["action"] = "launch_app"
+                                elif "url" in params:
+                                    params["action"] = "open_url"
+                                else:
+                                    params["action"] = "launch_app"
+                        elif tool_name in {"close_tab", "switch_tab", "new_tab", "list_tabs", "list_windows", "active_window", "focus_window"}:
+                            action_name = tool_name
+                            tool_name = "window_management"
+                            params.setdefault("action", action_name)
+                        elif tool_name in {"type", "click", "hover", "double_click", "right_click", "middle_click", "scroll", "drag", "key", "hotkey", "click_text", "hover_text"}:
+                            action_name = tool_name
+                            tool_name = "gui_action"
+                            action_type = "gui"
+                            params.setdefault("action", action_name)
+                        elif tool_name == "run_command" and any(k in str(params.get("command", "")) for k in ["xdg-open", "youtube.com", "google-chrome"]):
+                            # Normalize browser run_commands into safe desktop open_url
+                            cmd_str = str(params.get("command", ""))
+                            m = re.search(r"https?://[^\s'\"]+", cmd_str)
+                            url = m.group(0) if m else "https://www.youtube.com"
+                            tool_name = "desktop_action"
+                            action_type = "desktop"
+                            params = {"action": "open_url", "target": url}
+
 
                         parsed_steps.append(
                             PlanStep(

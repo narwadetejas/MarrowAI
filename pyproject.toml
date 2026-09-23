@@ -7,8 +7,13 @@ name = "marrowai"
 version = "0.2.0"
 description = "Offline-first Linux assistant with structured planning and safety gate"
 readme = "README.md"
-requires-python = ">=3.11"
-dependencies = []
+requires-python = ">=3.10"
+dependencies = [
+    "mss>=9.0.0",
+    "pillow>=9.0.0",
+    "pyautogui>=0.9.54",
+    "rapidocr-onnxruntime>=1.3.0",
+]
 
 [project.scripts]
 marrowai = "marrowai.cli:main"

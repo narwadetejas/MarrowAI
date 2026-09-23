@@ -35,6 +35,33 @@ class RiskClassifier:
         "launch_app",
         "open_url",
         "install_package",
+        "screen_perception",
+        "screen",
+        "window_management",
+        "windows",
+        "tabs",
+        "daily_context",
+        "daily_memory",
+        "click",
+        "left_click",
+        "double_click",
+        "right_click",
+        "middle_click",
+        "hover",
+        "hover_text",
+        "mouse_hover",
+        "move",
+        "mousemove",
+        "type",
+        "type_text",
+        "key",
+        "press_key",
+        "hotkey",
+        "scroll",
+        "click_text",
+        "browser_search_and_play",
+        "watch_youtube",
+        "play_youtube",
     }
 
     destructive_tokens = [
@@ -59,8 +86,9 @@ class RiskClassifier:
 
     def is_destructive(self, command_str: str) -> bool:
         """Determines if a command string contains destructive or system-altering tokens."""
-        cmd_lower = command_str.lower().strip()
-        return any(tok in cmd_lower for tok in self.destructive_tokens)
+        cmd_lower = command_str.lower()
+        return any(token in cmd_lower for token in self.destructive_tokens)
+
 
     def requires_sudo(self, step: PlanStep) -> bool:
         """Checks if a step requires elevated sudo privileges."""
@@ -195,6 +223,7 @@ class RiskClassifier:
             confidence=0.95,
             requires_confirmation=False,
         )
+
 
 
 class SafetyGate(RiskClassifier):

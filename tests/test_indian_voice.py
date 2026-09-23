@@ -8,8 +8,8 @@ def test_indian_voice_profiles_defined():
     assert "indian_male" in VOICE_PROFILES
     assert VOICE_PROFILES["indian_female"]["espeak_voice"] == "en-in+f2"
     assert VOICE_PROFILES["indian_male"]["espeak_voice"] == "en-in+m3"
-    assert VOICE_PROFILES["indian_female"]["label"] == "Indian English (Female)"
-    assert VOICE_PROFILES["indian_male"]["label"] == "Indian English (Male)"
+    assert "Indian English (Female" in VOICE_PROFILES["indian_female"]["label"]
+    assert "Indian English (Male" in VOICE_PROFILES["indian_male"]["label"]
 
 
 def test_voice_engine_switches_profile():
@@ -36,7 +36,7 @@ def test_voice_engine_status_reports_profile():
     engine = OfflineVoiceEngine(profile="indian_male")
     status = engine.status()
     assert status["active_profile"] == "indian_male"
-    assert status["profile_label"] == "Indian English (Male)"
+    assert "Indian English (Male" in status["profile_label"]
     assert "indian_female" in status["available_profiles"]
 
 

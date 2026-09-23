@@ -1,5 +1,20 @@
 """MarrowAI core package."""
 
+import glob
+import os
+import sys
+from pathlib import Path
+
+# Automatically inject local virtual environment site-packages into sys.path if available
+for candidate_dir in [
+    Path(__file__).resolve().parents[2] / ".venv",
+    Path("/home/tejas/Projects/MarrowAI/.venv"),
+]:
+    if candidate_dir.is_dir():
+        for sp in glob.glob(str(candidate_dir / "lib" / "python*" / "site-packages")):
+            if sp not in sys.path:
+                sys.path.insert(0, sp)
+
 from .assistant import MarrowAssistant
 from .audit import AuditLogger
 from .config import get_config

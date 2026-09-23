@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import shlex
+import shutil
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -37,6 +39,29 @@ class SafeExecutor:
         "launch_app",
         "open_url",
         "install_package",
+        "click",
+        "left_click",
+        "double_click",
+        "right_click",
+        "middle_click",
+        "hover",
+        "hover_text",
+        "mouse_hover",
+        "move",
+        "mousemove",
+        "type",
+        "type_text",
+        "key",
+        "press_key",
+        "hotkey",
+        "scroll",
+        "click_text",
+        "browser_search_and_play",
+        "watch_youtube",
+        "play_youtube",
+        "window_management",
+        "screen_perception",
+        "daily_context",
     }
 
     def __init__(self, governor: ResourceGovernor | None = None, registry: ToolRegistry | None = None) -> None:
@@ -76,13 +101,16 @@ class SafeExecutor:
 
     def _run_process(self, arguments: list[str], cwd: Path | None = None) -> ExecutionResult:
         try:
+            cmd = list(arguments)
+            if cmd and cmd[0] == "python" and not shutil.which("python"):
+                cmd[0] = sys.executable or "python3"
             completed = subprocess.run(
-                arguments,
+                cmd,
                 capture_output=True,
                 text=True,
                 timeout=30,
                 cwd=cwd,
-                shell=True,
+                shell=False,
             )
             output = (completed.stdout or "") + (completed.stderr or "")
             status = "success" if completed.returncode == 0 else "failed"

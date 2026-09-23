@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import urllib.parse
 from dataclasses import dataclass, field
 from typing import Any
@@ -27,6 +28,560 @@ class RuleBasedPlanner:
             idx = raw_text.lower().rfind("current request:")
             raw_text = raw_text[idx + len("current request:"):].strip()
         text = raw_text.lower()
+
+        # -------------------------------------------------------------
+        # 0. Daily Context Review & Conversational History Recall
+        # -------------------------------------------------------------
+        if any(phrase in text for phrase in [
+            "review today", "today's context", "today's chat", "today's history",
+            "what did we do today", "what did we talk about today", "what did we discuss today",
+            "previous question", "last question", "what did i ask earlier",
+            "what did you say earlier", "what did you answer earlier", "show today's session",
+            "review daily context", "daily context",
+        ]):
+            return TaskPlan(
+                intent="review_today_context",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="tool",
+                        description="Review today's conversational context, previous questions, and executed actions",
+                        tool_name="daily_context",
+                        parameters={"action": "review_today"},
+                        approval_required=False,
+                    )
+                ],
+                risk_level="low",
+            )
+
+        if "list days" in text or "available days" in text or ("which days" in text and "context" in text):
+            return TaskPlan(
+                intent="list_daily_contexts",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="tool",
+                        description="List all recorded daily context journal dates",
+                        tool_name="daily_context",
+                        parameters={"action": "list_days"},
+                        approval_required=False,
+                    )
+                ],
+                risk_level="low",
+            )
+
+        # -------------------------------------------------------------
+        # 1. Screen Vision & Perception
+        # -------------------------------------------------------------
+        if any(phrase in text for phrase in [
+            "what's on my screen", "what is on my screen", "what is on screen", "see screen",
+            "look at my screen", "describe my screen", "describe screen", "read screen",
+            "inspect screen", "what do you see on screen", "view screen",
+        ]):
+            return TaskPlan(
+                intent="screen_perception",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="tool",
+                        description="Inspect and summarize everything visible on the screen",
+                        tool_name="screen_perception",
+                        parameters={"action": "describe_screen"},
+                        approval_required=False,
+                    )
+                ],
+                risk_level="low",
+            )
+
+        if any(phrase in text for phrase in ["take screenshot", "capture screen", "save screenshot", "take a screenshot"]):
+            return TaskPlan(
+                intent="capture_screen",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="tool",
+                        description="Capture the desktop screen and save to disk",
+                        tool_name="screen_perception",
+                        parameters={"action": "capture_screen"},
+                        approval_required=False,
+                    )
+                ],
+                risk_level="low",
+            )
+
+        # -------------------------------------------------------------
+        # 2. Window Awareness & Management
+        # -------------------------------------------------------------
+        if any(phrase in text for phrase in [
+            "what apps are open", "which apps are open", "list open apps", "list apps",
+            "what windows are open", "which windows are open", "list open windows", "list windows",
+            "show open windows", "show open apps",
+        ]):
+            return TaskPlan(
+                intent="list_windows",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="tool",
+                        description="List all open desktop windows and running applications",
+                        tool_name="window_management",
+                        parameters={"action": "list_windows"},
+                        approval_required=False,
+                    )
+                ],
+                risk_level="low",
+            )
+
+        if any(phrase in text for phrase in ["active window", "focused window", "current window", "which window is active"]):
+            return TaskPlan(
+                intent="active_window",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="tool",
+                        description="Get the currently focused window details and geometry",
+                        tool_name="window_management",
+                        parameters={"action": "active_window"},
+                        approval_required=False,
+                    )
+                ],
+                risk_level="low",
+            )
+
+        # Focus / switch window
+        focus_match = re.search(r"\b(?:focus|switch to|bring to front|raise)\s+(?:window|app|application)?\s*([a-zA-Z0-9_\-\. ]+)", raw_text, re.IGNORECASE)
+        if focus_match and not any(w in text for w in ["tab", "voice", "model", "vm"]):
+            target_app = focus_match.group(1).strip()
+            if target_app and target_app.lower() not in {"male", "female", "man", "woman"}:
+                return TaskPlan(
+                    intent="focus_window",
+                    steps=[
+                        PlanStep(
+                            id="step-1",
+                            action_type="gui",
+                            description=f"Focus and activate window '{target_app}'",
+                            tool_name="window_management",
+                            parameters={"action": "focus_window", "target": target_app},
+                            approval_required=False,
+                        )
+                    ],
+                    risk_level="low",
+                )
+
+        if any(phrase in text for phrase in ["close window", "close current window", "close active window"]):
+            return TaskPlan(
+                intent="close_window",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="gui",
+                        description="Close the currently active window",
+                        tool_name="window_management",
+                        parameters={"action": "close_window"},
+                        approval_required=False,
+                    )
+                ],
+                risk_level="low",
+            )
+
+        # -------------------------------------------------------------
+        # 3. Tab Awareness & Control
+        # -------------------------------------------------------------
+        if any(phrase in text for phrase in ["what tabs are open", "which tabs are open", "list open tabs", "list tabs", "show tabs"]):
+            return TaskPlan(
+                intent="list_tabs",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="tool",
+                        description="Detect and list open browser and editor tabs",
+                        tool_name="window_management",
+                        parameters={"action": "list_tabs"},
+                        approval_required=False,
+                    )
+                ],
+                risk_level="low",
+            )
+
+        if any(phrase in text for phrase in ["switch tab", "next tab", "go to next tab", "switch to next tab"]):
+            return TaskPlan(
+                intent="switch_tab",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="gui",
+                        description="Switch to the next tab",
+                        tool_name="window_management",
+                        parameters={"action": "switch_tab", "direction": "next"},
+                        approval_required=False,
+                    )
+                ],
+                risk_level="low",
+            )
+
+        if any(phrase in text for phrase in ["previous tab", "prev tab", "go to previous tab", "switch to previous tab"]):
+            return TaskPlan(
+                intent="switch_tab_prev",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="gui",
+                        description="Switch to the previous tab",
+                        tool_name="window_management",
+                        parameters={"action": "switch_tab", "direction": "prev"},
+                        approval_required=False,
+                    )
+                ],
+                risk_level="low",
+            )
+
+        tab_idx_match = re.search(r"\b(?:switch to|go to)?\s*tab\s*(?:number|#)?\s*([1-9])\b", text)
+        if tab_idx_match:
+            idx = int(tab_idx_match.group(1))
+            return TaskPlan(
+                intent="switch_tab_index",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="gui",
+                        description=f"Switch to tab #{idx}",
+                        tool_name="window_management",
+                        parameters={"action": "switch_tab", "index": idx},
+                        approval_required=False,
+                    )
+                ],
+                risk_level="low",
+            )
+
+        if any(phrase in text for phrase in ["new tab", "open a new tab", "create new tab"]):
+            return TaskPlan(
+                intent="new_tab",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="gui",
+                        description="Open a new browser tab",
+                        tool_name="window_management",
+                        parameters={"action": "new_tab"},
+                        approval_required=False,
+                    )
+                ],
+                risk_level="low",
+            )
+
+        # Close tab with optional app/window target and typos (e.g. "close thw antigravity ide tab", "close the tab", "close browser tab")
+        close_tab_match = re.search(r"\bclose\s+(?:the|thw|this|current)?\s*([a-zA-Z0-9_\-\. ]*?)\s*tab\b", text)
+        if close_tab_match or any(phrase in text for phrase in ["close tab", "close current tab", "close this tab"]):
+            target_app = close_tab_match.group(1).strip() if close_tab_match else ""
+            target_app = re.sub(r"\b(the|thw|active|current)\b", "", target_app).strip()
+            steps = []
+            if target_app:
+                steps.append(
+                    PlanStep(
+                        id="step-1",
+                        action_type="gui",
+                        description=f"Focus window '{target_app}'",
+                        tool_name="window_management",
+                        parameters={"action": "focus_window", "target": target_app},
+                        approval_required=False,
+                    )
+                )
+                steps.append(
+                    PlanStep(
+                        id="step-2",
+                        action_type="gui",
+                        description=f"Close active tab in '{target_app}'",
+                        tool_name="window_management",
+                        parameters={"action": "close_tab", "target": target_app},
+                        approval_required=False,
+                    )
+                )
+            else:
+                steps.append(
+                    PlanStep(
+                        id="step-1",
+                        action_type="gui",
+                        description="Close the current tab",
+                        tool_name="window_management",
+                        parameters={"action": "close_tab"},
+                        approval_required=False,
+                    )
+                )
+            return TaskPlan(
+                intent="close_tab",
+                steps=steps,
+                risk_level="low",
+            )
+
+        # -------------------------------------------------------------
+        # 4. Visual Clicking, Hovering & GUI Actions
+        # -------------------------------------------------------------
+        # Coordinate Clicks (e.g. click at (200, 300), right click at 100, 100)
+        coord_click_match = re.search(r"\b(right |double |middle )?click (?:at |on )?\(?(\d+)[,\s]+(\d+)\)?", raw_text, re.IGNORECASE)
+        if coord_click_match:
+            c_type = (coord_click_match.group(1) or "").strip().lower()
+            cx = int(coord_click_match.group(2))
+            cy = int(coord_click_match.group(3))
+            act = "click"
+            if c_type == "right":
+                act = "right_click"
+            elif c_type == "double":
+                act = "double_click"
+            elif c_type == "middle":
+                act = "middle_click"
+            return TaskPlan(
+                intent="coordinate_click",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="gui",
+                        description=f"{act.replace('_', ' ').capitalize()} at screen coordinates ({cx}, {cy})",
+                        tool_name="gui_action",
+                        parameters={"action": act, "parameters": {"x": cx, "y": cy}},
+                        approval_required=False,
+                    )
+                ],
+                risk_level="low",
+            )
+
+        # Hover Actions (e.g. hover over Search, hover at (400, 200), hover on button)
+        coord_hover_match = re.search(r"\bhover (?:at |on )?\(?(\d+)[,\s]+(\d+)\)?", raw_text, re.IGNORECASE)
+        if coord_hover_match:
+            hx = int(coord_hover_match.group(1))
+            hy = int(coord_hover_match.group(2))
+            return TaskPlan(
+                intent="hover_mouse",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="gui",
+                        description=f"Hover mouse cursor at screen coordinates ({hx}, {hy})",
+                        tool_name="gui_action",
+                        parameters={"action": "hover", "parameters": {"x": hx, "y": hy, "duration": 0.3}},
+                        approval_required=False,
+                    )
+                ],
+                risk_level="low",
+            )
+
+        hover_text_match = re.search(r"\bhover (?:over |on |at |the text |button )?['\"]?([^'\"\n]+)['\"]?$", raw_text, re.IGNORECASE)
+        if hover_text_match and "hover" in text and not any(w in text for w in ["link to", "url", "http"]):
+            htarget = hover_text_match.group(1).strip(".,!?;:'\" ")
+            if htarget and not htarget.isdigit() and len(htarget) < 50:
+                return TaskPlan(
+                    intent="hover_mouse",
+                    steps=[
+                        PlanStep(
+                            id="step-1",
+                            action_type="gui",
+                            description=f"Visually locate and hover mouse over '{htarget}' on screen",
+                            tool_name="gui_action",
+                            parameters={"action": "hover_text", "parameters": {"text": htarget, "duration": 0.4}},
+                            approval_required=False,
+                        )
+                    ],
+                    risk_level="low",
+                )
+
+        click_match = re.search(r"\bclick (?:on |the button |button )?['\"]?([^'\"\n]+)['\"]?$", raw_text, re.IGNORECASE)
+        if click_match and not any(w in text for w in ["link to", "url", "http"]):
+            target = click_match.group(1).strip(".,!?;:'\" ")
+            if target and not target.isdigit() and len(target) < 50:
+                is_double = "double" in text
+                return TaskPlan(
+                    intent="visual_click",
+                    steps=[
+                        PlanStep(
+                            id="step-1",
+                            action_type="gui",
+                            description=f"Visually locate and click '{target}' on screen",
+                            tool_name="gui_action",
+                            parameters={"action": "click_text", "parameters": {"text": target, "double": is_double}},
+                            approval_required=False,
+                        )
+                    ],
+                    risk_level="low",
+                )
+
+        if "scroll down" in text:
+            return TaskPlan(
+                intent="scroll_screen",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="gui",
+                        description="Scroll down on the screen",
+                        tool_name="gui_action",
+                        parameters={"action": "scroll", "parameters": {"direction": "down", "amount": 5}},
+                        approval_required=False,
+                    )
+                ],
+                risk_level="low",
+            )
+        if "scroll up" in text:
+            return TaskPlan(
+                intent="scroll_screen",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="gui",
+                        description="Scroll up on the screen",
+                        tool_name="gui_action",
+                        parameters={"action": "scroll", "parameters": {"direction": "up", "amount": 5}},
+                        approval_required=False,
+                    )
+                ],
+                risk_level="low",
+            )
+
+        # Key press and hotkey actions (e.g. press Enter, hotkey ctrl+t)
+        hotkey_match = re.search(r"\b(?:trigger |press )?(?:hotkey|shortcut|combo) ['\"]?([a-zA-Z0-9_\-+]+)['\"]?", raw_text, re.IGNORECASE)
+        if hotkey_match:
+            combo = hotkey_match.group(1).strip()
+            return TaskPlan(
+                intent="trigger_hotkey",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="gui",
+                        description=f"Trigger hotkey combination: '{combo}'",
+                        tool_name="gui_action",
+                        parameters={"action": "hotkey", "parameters": {"combo": combo}},
+                        approval_required=False,
+                    )
+                ],
+                risk_level="low",
+            )
+
+        press_match = re.search(r"\bpress (?:the )?(?:key )?['\"]?([a-zA-Z0-9_\-]+)['\"]?(?: key)?$", raw_text, re.IGNORECASE)
+        if press_match and any(k in text for k in ["enter", "return", "tab", "escape", "space", "backspace", "delete", "slash"]):
+            kname = press_match.group(1).strip()
+            return TaskPlan(
+                intent="press_key",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="gui",
+                        description=f"Press keyboard key: '{kname}'",
+                        tool_name="gui_action",
+                        parameters={"action": "key", "parameters": {"key": kname}},
+                        approval_required=False,
+                    )
+                ],
+                risk_level="low",
+            )
+
+        type_match = re.search(r"\btype ['\"]([^'\"]+)['\"]", raw_text, re.IGNORECASE)
+        if not type_match:
+            type_match = re.search(r"\btype text ([^\n]+)", raw_text, re.IGNORECASE)
+        if type_match:
+            type_content = type_match.group(1).strip()
+            return TaskPlan(
+                intent="type_text",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="gui",
+                        description=f"Type text into active input field: '{type_content}'",
+                        tool_name="gui_action",
+                        parameters={"action": "type", "parameters": {"text": type_content}},
+                        approval_required=False,
+                    )
+                ],
+                risk_level="low",
+            )
+
+        # 4b. LibreOffice Writer & Document Essay Workflow
+        is_libre_writer = (
+            ("libre" in text or "lowriter" in text or "writer" in text or "libreoffice" in text)
+            and ("essay" in text or "write" in text or "type" in text or "article" in text or "document" in text)
+        )
+        if is_libre_writer:
+            essay_text = (
+                "Artificial Intelligence and Autonomous Operating Systems\n\n"
+                "Artificial intelligence is rapidly advancing from cloud-based conversational interfaces "
+                "to fully autonomous, offline-capable desktop operating partners. By integrating computer vision, "
+                "window management, deep telemetry, and local neural network models, personal workstations can "
+                "execute complex developer workflows, automate repetitive tasks, and safeguard private data.\n\n"
+                "The shift toward offline-first intelligence guarantees absolute sovereignty, continuous uptime, "
+                "and zero-latency local execution across Linux environments."
+            )
+            return TaskPlan(
+                intent="write_essay_libreoffice",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="desktop",
+                        description="Launch LibreOffice Writer application",
+                        tool_name="desktop_action",
+                        parameters={"action": "launch_app", "app_name": "libreoffice writer"},
+                        approval_required=False,
+                    ),
+                    PlanStep(
+                        id="step-2",
+                        action_type="cli",
+                        description="Wait for LibreOffice Writer window to initialize and take focus",
+                        tool_name="run_command",
+                        parameters={"command": "sleep 2.5"},
+                        approval_required=False,
+                    ),
+                    PlanStep(
+                        id="step-3",
+                        action_type="gui",
+                        description="Type essay into LibreOffice Writer document",
+                        tool_name="gui_action",
+                        parameters={"action": "type", "parameters": {"text": essay_text}},
+                        approval_required=False,
+                    ),
+                ],
+                risk_level="low",
+            )
+
+        # 4c. Code Generation & Desktop Editor Workflow (e.g. Selection Sort)
+        is_sort_code = ("sort" in text or "algorithm" in text) and any(w in text for w in ["sellection", "selection", "bubble", "insertion", "merge", "quick"])
+        is_code_editor_request = ("write" in text or "create" in text or "code" in text) and any(w in text for w in ["editor", "gedit", "vscode", "code", "app"])
+        if is_sort_code and is_code_editor_request:
+            code_content = (
+                "#!/usr/bin/env python3\n"
+                "\"\"\"Selection Sort Algorithm Implementation in Python.\"\"\"\n\n"
+                "def selection_sort(arr: list[int]) -> list[int]:\n"
+                "    \"\"\"Sort an array in ascending order using selection sort.\"\"\"\n"
+                "    n = len(arr)\n"
+                "    for i in range(n):\n"
+                "        min_idx = i\n"
+                "        for j in range(i + 1, n):\n"
+                "            if arr[j] < arr[min_idx]:\n"
+                "                min_idx = j\n"
+                "        arr[i], arr[min_idx] = arr[min_idx], arr[i]\n"
+                "    return arr\n\n\n"
+                "if __name__ == '__main__':\n"
+                "    numbers = [64, 25, 12, 22, 11, 90]\n"
+                "    print('Original array:', numbers)\n"
+                "    sorted_numbers = selection_sort(numbers.copy())\n"
+                "    print('Sorted array:  ', sorted_numbers)\n"
+            )
+            return TaskPlan(
+                intent="write_code_in_editor",
+                steps=[
+                    PlanStep(
+                        id="step-1",
+                        action_type="tool",
+                        description="Save Selection Sort Python code to selection_sort.py",
+                        tool_name="write_file",
+                        parameters={"path": "selection_sort.py", "content": code_content},
+                        approval_required=False,
+                    ),
+                    PlanStep(
+                        id="step-2",
+                        action_type="desktop",
+                        description="Open selection_sort.py in desktop code editor (gedit)",
+                        tool_name="desktop_action",
+                        parameters={"action": "launch_app", "app_name": "gedit selection_sort.py"},
+                        approval_required=False,
+                    ),
+                ],
+                risk_level="low",
+            )
 
         # 0a. Informative question: What is Arch Linux
         if ("what is" in text or "tell me about" in text or "explain" in text or "describe" in text) and "arch" in text:
@@ -416,47 +971,6 @@ class RuleBasedPlanner:
                 risk_level="high",
             )
 
-        # 7. Create/build backend
-        if ("create" in text or "build" in text) and ("backend" in text or "fastapi" in text):
-            return TaskPlan(
-                intent="create_backend_project",
-                steps=[
-                    PlanStep(
-                        id="step-1",
-                        action_type="tool",
-                        description="Create a local backend project scaffold",
-                        tool_name="scaffold_backend",
-                        parameters={"project_name": "backend_project"},
-                        approval_required=False,
-                    ),
-                    PlanStep(
-                        id="step-2",
-                        action_type="tool",
-                        description="Run the project test suite",
-                        tool_name="run_tests",
-                        parameters={"path": "backend_project"},
-                        approval_required=False,
-                    ),
-                ],
-                risk_level="low",
-            )
-
-        # 8. Test project
-        if "test" in text and ("project" in text or "code" in text or "suite" in text):
-            return TaskPlan(
-                intent="run_tests",
-                steps=[
-                    PlanStep(
-                        id="step-1",
-                        action_type="tool",
-                        description="Run the local test suite",
-                        tool_name="run_tests",
-                        parameters={},
-                        approval_required=False,
-                    )
-                ],
-                risk_level="low",
-            )
 
         # 9. Conversational assistance & self-explanation
         if any(w in text for w in ["who are you", "what can you do", "help", "who created you", "who made you", "your name", "what is your name"]):
@@ -634,20 +1148,7 @@ class RuleBasedPlanner:
                 url = "https://www.google.com"
                 intent_name = "open_browser"
                 desc = "Open web browser"
-            elif is_search and not is_movie and not is_video and not is_music:
-                url = f"https://www.google.com/search?q={urllib.parse.quote_plus(cleaned_query)}"
-                intent_name = "search_web"
-                desc = f"Search Google and open web browser for '{cleaned_query}'"
-            else:
-                # Direct media / movie streaming search
-                enc_query = urllib.parse.quote_plus(cleaned_query)
-                url = f"https://www.youtube.com/results?search_query={enc_query}"
-                intent_name = "watch_movie" if is_movie else ("watch_youtube" if (is_video or is_music) else "watch_media")
-                desc = f"Formulate search query and launch web browser to find and stream '{cleaned_query}'"
-
-            return TaskPlan(
-                intent=intent_name,
-                steps=[
+                steps = [
                     PlanStep(
                         id="step-1",
                         action_type="desktop",
@@ -656,7 +1157,76 @@ class RuleBasedPlanner:
                         parameters={"action": "open_url", "target": url, "query": cleaned_query},
                         approval_required=False,
                     )
-                ],
+                ]
+            elif is_search and not is_movie and not is_video and not is_music:
+                url = f"https://www.google.com/search?q={urllib.parse.quote_plus(cleaned_query)}"
+                intent_name = "search_web"
+                desc = f"Search Google and open web browser for '{cleaned_query}'"
+                steps = [
+                    PlanStep(
+                        id="step-1",
+                        action_type="desktop",
+                        description=desc,
+                        tool_name="desktop_action",
+                        parameters={"action": "open_url", "target": url, "query": cleaned_query},
+                        approval_required=False,
+                    )
+                ]
+            else:
+                # Direct media / movie streaming search
+                enc_query = urllib.parse.quote_plus(cleaned_query)
+                url = f"https://www.youtube.com/results?search_query={enc_query}"
+                intent_name = "watch_movie" if is_movie else ("watch_youtube" if (is_video or is_music) else "watch_media")
+                desc = f"Formulate search query and launch web browser to find and stream '{cleaned_query}'"
+
+                is_generic_youtube = (
+                    not is_movie
+                    and not is_music
+                    and not any(w in cleaned_query.lower() for w in ["sanam", "song", "track", "music", "movie", "film", "episode", "trailer", "video of", "play "])
+                    and any(w in text for w in ["youtube", "youtu.be", "youtuuube"])
+                )
+                if is_generic_youtube:
+                    steps = [
+                        PlanStep(
+                            id="step-1",
+                            action_type="desktop",
+                            description="Open YouTube in web browser",
+                            tool_name="desktop_action",
+                            parameters={"action": "open_url", "target": "https://www.youtube.com", "query": "youtube"},
+                            approval_required=False,
+                        )
+                    ]
+                else:
+                    steps = [
+                        PlanStep(
+                            id="step-1",
+                            action_type="desktop",
+                            description=desc,
+                            tool_name="desktop_action",
+                            parameters={"action": "open_url", "target": url, "query": cleaned_query},
+                            approval_required=False,
+                        ),
+                        PlanStep(
+                            id="step-2",
+                            action_type="gui",
+                            description="Focus the web browser window",
+                            tool_name="window_management",
+                            parameters={"action": "focus_window", "target": "Chrome"},
+                            approval_required=False,
+                        ),
+                        PlanStep(
+                            id="step-3",
+                            action_type="gui",
+                            description=f"Autonomously select and play video '{cleaned_query}'",
+                            tool_name="gui_action",
+                            parameters={"action": "browser_search_and_play", "parameters": {"query": cleaned_query, "platform": "youtube"}},
+                            approval_required=False,
+                        ),
+                    ]
+
+            return TaskPlan(
+                intent=intent_name,
+                steps=steps,
                 risk_level="low",
             )
 
@@ -822,22 +1392,22 @@ class RuleBasedPlanner:
             or any(c in raw_text for c in [";", "&&", "||", "|", ">", "<", "$", "`"])
         )
 
-        if not has_cli_indicator and len(raw_text.split()) > 2 and any(w in raw_text.lower() for w in ["i ", "can ", "please ", "want ", "help ", "show ", "give "]):
-            # Natural language conversational statement
+        if not has_cli_indicator and len(raw_text.split()) > 2:
+            # Natural language conversational statement that is not a known shell command
             return TaskPlan(
                 intent="general_question",
                 steps=[
                     PlanStep(
                         id="step-1",
                         action_type="tool",
-                        description=f"Provide intelligent guidance for: {raw_text}",
+                        description=f"Explain that complex natural language requires the AI model.",
                         tool_name="echo",
                         parameters={
                             "text": (
-                                f"I understand your request regarding '{raw_text}'. "
-                                "As your offline Linux partner, I can run commands, provision VMs, manage local Ollama models, "
-                                "find and play movies/videos in your browser, or assist with system administration and code. "
-                                "Please specify what you would like to execute!"
+                                f"I am currently running in offline fallback mode because the AI model is not reachable. "
+                                f"I cannot automatically plan the complex task '{raw_text}'. "
+                                f"Please ensure Ollama is running and a model is downloaded to process natural language requests like this, "
+                                f"or provide direct shell commands instead."
                             )
                         },
                         approval_required=False,
@@ -852,7 +1422,7 @@ class RuleBasedPlanner:
                 PlanStep(
                     id="step-1",
                     action_type="cli",
-                    description=f"Execute user command on host: {raw_text}",
+                    description=f"Execute command on host: {raw_text}",
                     tool_name="run_command",
                     parameters={"command": raw_text},
                     approval_required=True,

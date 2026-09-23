@@ -1,0 +1,6 @@
+#!/home/tejas/Projects/MarrowAI/.venv/bin/python3
+import sys
+from marrowai.web_gui import run_web_dashboard
+if __name__ == '__main__':
+    sys.argv[0] = sys.argv[0].removesuffix('.exe')
+    sys.exit(run_web_dashboard())

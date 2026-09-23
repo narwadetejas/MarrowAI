@@ -24,7 +24,7 @@ Version: ${VERSION}
 Section: utils
 Priority: optional
 Architecture: ${ARCH}
-Depends: python3, python3-tk, ffmpeg, espeak-ng, git, curl
+Depends: python3, python3-tk, ffmpeg, espeak-ng, git, curl, xdotool
 Maintainer: MarrowAI Team <team@marrowai.local>
 Description: Offline-first local assistant with safe planning, voice, and scaffolding
 EOF
