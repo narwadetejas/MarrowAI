@@ -1,6 +1,12 @@
-# MarrowAI Workstation
+# MarrowAI
 
-MarrowAI is an offline-first Linux operating assistant designed around a structured planning pipeline, safety gate policy, resource governance, and voice-guided execution.
+MarrowAI – AI Operating System
+
+MarrowAI is an intelligent, offline-first Linux automation platform designed to make computing accessible to everyone, regardless of technical expertise or physical ability. Powered by MarrowAI, it transforms natural-language voice and text instructions into autonomous system-level and GUI operations, eliminating the need for complex commands or manual intervention.
+
+Going beyond conventional automation, arrowAI explores ML-driven kernel-level optimization using eBPF, targeting intelligent process and memory management while minimizing system overhead and resource conflicts.
+
+Our vision is to bridge the gap between human intent and machine execution, transforming Linux into an intelligent, accessible, and self-optimizing operating system.
 
 ## Quick Start
 
